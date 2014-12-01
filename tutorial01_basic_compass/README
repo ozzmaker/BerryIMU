@@ -1,3 +1,6 @@
 To compile;
 gcc -o compass_tutorial01 compass_tutorial01.c -lm
 
+
+More info here;
+http://ozzmaker.com/2014/12/01/compass1/
