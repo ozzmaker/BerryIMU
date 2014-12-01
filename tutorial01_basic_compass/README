@@ -1,0 +1,3 @@
+To compile;
+gcc -o compass_tutorial01 compass_tutorial01.c -lm
+
