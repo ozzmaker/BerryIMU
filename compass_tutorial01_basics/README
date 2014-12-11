@@ -1,3 +1,7 @@
+* Developed by Mark Williams
+* Created December 2014
+
+
 To compile;
 gcc -o compass_tutorial01 compass_tutorial01.c -lm
 
