@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 		AccYangle -= (float)360.0;
 
 
-//      Complementary filter used to combine the accelerometer and gyro values.
+	//Complementary filter used to combine the accelerometer and gyro values.
 	CFangleX=AA*(CFangleX+rate_gyr_x*DT) +(1 - AA) * AccXangle;
 	CFangleY=AA*(CFangleY+rate_gyr_y*DT) +(1 - AA) * AccYangle;
 
