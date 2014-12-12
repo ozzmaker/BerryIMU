@@ -1,0 +1,14 @@
+* Developed by Mark Williams
+* Created December 2014
+
+This program is used to create an Inclinometer using a Raspberry Pi and an IMU
+
+http://ozzmaker.com/2014/12/12/inclinometer-using-raspberry-pi-imu/
+
+Compile with;
+
+gcc -o gyro_accelerometer_tutorial02 -lm gyro_accelerometer_tutorial02.c `sdl-config --cflags` `sdl-config --libs` -lSDL_image -lSDL_gfx
+
+
+
+
