@@ -1,0 +1,10 @@
+* Developed by Mark Williams
+* Created December 2014
+
+
+To compile;
+gcc -o compass_tutorial02 compass_tutorial02.c -lm
+
+
+More info here;
+http://ozzmaker.com/2014/12/17/compass2
