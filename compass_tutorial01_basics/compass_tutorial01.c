@@ -20,7 +20,7 @@
     MA 02111-1307, USA
 */
 #include <stdint.h>
-#include "LSM303D.h"
+#include "LSM9DS0.h"
 #include <linux/i2c-dev.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -58,14 +58,14 @@ int main(int argc, char *argv[])
 
 
 	//Enable the magnetometer
-	writeMagReg( LSM303D_CTRL5, 0xF0);   // Temp enable, M data rate = 50Hz
-	writeMagReg( LSM303D_CTRL6, 0x60);   // +/-12gauss
-	writeMagReg( LSM303D_CTRL7, 0x00);   // Continuous-conversion mode
+	writeMagReg( CTRL_REG5_XM, 0b11110000);   // Temp enable, M data rate = 50Hz
+	writeMagReg( CTRL_REG6_XM, 0b01100000);   // +/-12gauss
+	writeMagReg( CTRL_REG7_XM, 0b00000000);   // Continuous-conversion mode
 
 	while(1)
 	{
 		readMAG(magRaw);
-		printf("magRaw X %i\t magRaw Y %i\t MagRaw Z %i \n", magRaw[0],magRaw[1],magRaw[2]);
+		printf("magRaw X %i    \tmagRaw Y %i \tMagRaw Z %i \n", magRaw[0],magRaw[1],magRaw[2]);
 
 		//Only needed if the heading value does not increase when the magnetometer is rotated clockwise
 		magRaw[1] = -magRaw[1];
@@ -112,11 +112,11 @@ void readMAG(int  *m)
 {
         uint8_t block[6];
 
-        readBlock(0x80 | LSM303D_OUT_X_L_M, sizeof(block), block);
+        readBlock(0x80 | OUT_X_L_M, sizeof(block), block);
 
-        *m = (int16_t)(block[1] | block[0] << 8);
-        *(m+1) = (int16_t)(block[3] | block[2] << 8) ;
-        *(m+2) = (int16_t)(block[5] | block[4] << 8) ;
+        *m = (int16_t)(block[0] | block[1] << 8);
+        *(m+1) = (int16_t)(block[2] | block[3] << 8);
+        *(m+2) = (int16_t)(block[4] | block[5] << 8);
 
 }
 
