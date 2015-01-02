@@ -20,7 +20,7 @@
     MA 02111-1307, USA
 */
 #include <stdint.h>
-#include "LSM303.h"
+#include "LSM9DS0.h"
 #include <linux/i2c-dev.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -66,21 +66,24 @@ int main(int argc, char *argv[])
 
 
 	// Enable accelerometer.
-        writeAccReg(LSM303_CTRL_REG1_A, 0b01010111); //  z,y,x axis enabled , 100Hz data rate
-        writeAccReg(LSM303_CTRL_REG4_A, 0b00101000); // +/- 8G full scale: FS = 10 on DLHC, high resolution output mode
+        writeAccReg(CTRL_REG1_XM, 0b01100111); //  z,y,x axis enabled, continuos update,  100Hz data rate
+        writeAccReg(CTRL_REG2_XM, 0b00100000); // +/- 16G full scale
 
-	 // Enable magnetometer
-        writeMagReg(LSM303_MR_REG_M, 0b00000000);  // enable magnometer
+        //Enable the magnetometer
+        writeMagReg( CTRL_REG5_XM, 0b11110000);   // Temp enable, M data rate = 50Hz
+        writeMagReg( CTRL_REG6_XM, 0b01100000);   // +/-12gauss
+        writeMagReg( CTRL_REG7_XM, 0b00000000);   // Continuous-conversion mode
 
 
-	//data output rate 220(Hz)
-	writeMagReg(LSM303_CRA_REG_M, 0b00011100); // enable tempereture sensor
 
 	while(1)
 	{
 		readMAG(magRaw);
 		readACC(accRaw);
 
+		//If your IMU is upside down, comment out the two lines below which we correct the tilt calculation
+//		accRaw[0] = -accRaw[0];
+//		accRaw[1] = -accRaw[1];
 
 		//Compute heading
 	        float heading = 180 * atan2(magRaw[1],magRaw[0])/M_PI;
@@ -97,7 +100,7 @@ int main(int argc, char *argv[])
 
 		//Calculate pitch and roll
 		pitch = asin(accXnorm);
-		roll = asin(accYnorm/cos(pitch));
+		roll = -asin(accYnorm/cos(pitch));
 
 		//Calculate the new tilt compensated values
 		magXcomp = magRaw[0]*cos(pitch)+magRaw[02]*sin(pitch);
@@ -170,23 +173,24 @@ void readACC(int  *a)
 {
         uint8_t block[6];
         selectDevice(file,ACC_ADDRESS);
-                readBlock(0x80 | LSM303_OUT_X_L_A, sizeof(block), block);
+                readBlock(0x80 | OUT_X_L_A, sizeof(block), block);
 
-        *a = (int16_t)(block[0] | block[1] << 8) >> 4;
-        *(a+1) = (int16_t)(block[2] | block[3] << 8) >> 4;
-        *(a+2) = (int16_t)(block[4] | block[5] << 8) >> 4;
+        *a = (int16_t)(block[0] | block[1] << 8);
+        *(a+1) = (int16_t)(block[2] | block[3] << 8);
+        *(a+2) = (int16_t)(block[4] | block[5] << 8);
 
 }
+
 void readMAG(int  *m)
 {
         uint8_t block[6];
-        selectDevice(file,MAG_ADDRESS);
-        // DLHC: register address order is X,Z,Y with high bytes first
-        readBlock(0x80 | LSM303_OUT_X_H_M, sizeof(block), block);
 
-        *m = (int16_t)(block[1] | block[0] << 8);
-        *(m+1) = (int16_t)(block[5] | block[4] << 8) ;
-        *(m+2) = (int16_t)(block[3] | block[2] << 8) ;
+        readBlock(0x80 | OUT_X_L_M, sizeof(block), block);
+
+        *m = (int16_t)(block[0] | block[1] << 8);
+        *(m+1) = (int16_t)(block[2] | block[3] << 8);
+        *(m+2) = (int16_t)(block[4] | block[5] << 8);
 
 }
+
 
