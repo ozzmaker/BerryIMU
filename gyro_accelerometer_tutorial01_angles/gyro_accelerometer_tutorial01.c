@@ -30,13 +30,11 @@
 #include <fcntl.h>
 #include <string.h>
 #include <time.h>
-#include "L3G.h"
-#include "LSM303.h"
 #include "sensor.c"
 
 
 #define DT 0.02         // [s/loop] loop period. 20ms
-#define AA 0.98         // complementary filter constant
+#define AA 0.97         // complementary filter constant
 
 #define A_GAIN 0.0573      // [deg/LSB]
 #define G_GAIN 0.070     // [deg/s/LSB]
@@ -106,7 +104,6 @@ int main(int argc, char *argv[])
 	gettimeofday(&tvBegin, NULL);
 
 
-
 	while(1)
 	{
 	startInt = mymillis();
@@ -135,16 +132,24 @@ int main(int argc, char *argv[])
 	AccXangle = (float) (atan2(acc_raw[1],acc_raw[2])+M_PI)*RAD_TO_DEG;
 	AccYangle = (float) (atan2(acc_raw[2],acc_raw[0])+M_PI)*RAD_TO_DEG;
 
-
-
-	//Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up
-	AccYangle-=90;
+	//Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
+	//Two different pieces of code are used depending on how your IMU is mounted. Comment out the appriate section.
+	//If IMU is upside down
+	/*
 	if (AccXangle >180)
-	{
-		AccXangle -= (float)360.0;
-	}
-	if (AccYangle >180)
-		AccYangle -= (float)360.0;
+        	AccXangle -= (float)380.0;
+
+	AccYangle-=90;
+        if (AccYangle >180)
+                AccYangle -= (float)360.0;
+	*/
+
+
+	//If IMU is up the correct way
+	//if (AccXangle >180)
+	AccYangle+=90;
+	AccXangle -= (float)180.0;
+	AccYangle -= (float)360.0;
 
 
 	//Complementary filter used to combine the accelerometer and gyro values.
