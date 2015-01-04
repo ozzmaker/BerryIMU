@@ -132,22 +132,24 @@ int main(int argc, char *argv[])
 	AccXangle = (float) (atan2(acc_raw[1],acc_raw[2])+M_PI)*RAD_TO_DEG;
 	AccYangle = (float) (atan2(acc_raw[2],acc_raw[0])+M_PI)*RAD_TO_DEG;
 
-        //Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
-        //Two different pieces of code are used depending on how your IMU is mounted.
-        //If IMU is upside down
-	/*
-        if (AccXangle >180)
-                AccXangle -= (float)380.0;
+	//Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up. This is a lot easier to read
+	//Two different pieces of code are used depending on how your IMU is mounted. Comment out the appriate section.
 
-        AccYangle-=90;
+	//If IMU is upside down
+	/*
+	if (AccXangle >180)
+        	AccXangle -= (float)380.0;
+
+	AccYangle-=90;
         if (AccYangle >180)
                 AccYangle -= (float)360.0;
 	*/
 
-        //If IMU is up the correct way, use these three lines
-        AccYangle+=90;
-        AccXangle -= (float)180.0;
-        AccYangle -= (float)360.0;
+
+	//If IMU is up the correct way
+	AccYangle+=90;
+	AccXangle -= (float)180.0;
+	AccYangle -= (float)360.0;
 
 
 	//Complementary filter used to combine the accelerometer and gyro values.

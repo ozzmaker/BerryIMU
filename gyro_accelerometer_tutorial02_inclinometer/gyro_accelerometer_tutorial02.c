@@ -35,7 +35,7 @@
 #include "sensor.c"
 
 
-#define DT 0.2         	// [s/loop] loop period. 20ms
+#define DT 0.2         	// [s/loop] loop period.  0.2  = 200ms
 #define AA 0.97         // complementary filter constant
 
 #define A_GAIN 0.0573   // [deg/LSB]
@@ -157,14 +157,25 @@ int main(int argc, char *argv[])
 
 
 
-	//Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up
-	AccYangle-=90;
-	if (AccXangle >180)
-	{
-		AccXangle -= (float)360.0;
-	}
-	if (AccYangle >180)
-		AccYangle -= (float)360.0;
+
+        //Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
+        //Two different pieces of code are used depending on how your IMU is mounted.
+        //If IMU is upside down
+        if (AccXangle >180)
+                AccXangle -= (float)380.0;
+
+        AccYangle-=90;
+        if (AccYangle >180)
+                AccYangle -= (float)360.0;
+
+
+        //If IMU is up the correct way, use these three lines
+	/*
+        AccYangle+=90;
+        AccXangle -= (float)180.0;
+        AccYangle -= (float)360.0;
+	*/
+
 
 
 	//Complementary filter used to combine the accelerometer and gyro values.
@@ -194,7 +205,7 @@ int main(int argc, char *argv[])
 int startSDL()
 {
 	//fb1 = small TFT.   fb0 = HDMI/RCA output
-        putenv("SDL_FBDEV=/dev/fb1");
+        putenv("SDL_FBDEV=/dev/fb0");
 
 
 	//Initialize  SDL and disable mouse
