@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
 		readACC(accRaw);
 
 		//If your IMU is upside down, comment out the two lines below which we correct the tilt calculation
-//		accRaw[0] = -accRaw[0];
-//		accRaw[1] = -accRaw[1];
+		accRaw[0] = -accRaw[0];
+		accRaw[1] = -accRaw[1];
 
 		//Compute heading
 	        float heading = 180 * atan2(magRaw[1],magRaw[0])/M_PI;
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 		printf("Compensated  Heading %7.3f  \n", heading);
 
 
-		//Sleep for 0.25ms
+		//Sleep for 25ms
 		usleep(25000);
 
 	}
