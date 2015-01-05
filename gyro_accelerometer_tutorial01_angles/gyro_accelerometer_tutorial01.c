@@ -137,17 +137,19 @@ int main(int argc, char *argv[])
         //If IMU is upside down
 	/*
         if (AccXangle >180)
-                AccXangle -= (float)380.0;
+                AccXangle -= (float)360.0;
 
         AccYangle-=90;
         if (AccYangle >180)
                 AccYangle -= (float)360.0;
 	*/
 
-        //If IMU is up the correct way, use these three lines
-        AccYangle+=90;
+        //If IMU is up the correct way, use these lines
         AccXangle -= (float)180.0;
-        AccYangle -= (float)360.0;
+	if (AccYangle > 90)
+	        AccYangle -= (float)270;
+	else
+		AccYangle += (float)90;
 
 
 	//Complementary filter used to combine the accelerometer and gyro values.
