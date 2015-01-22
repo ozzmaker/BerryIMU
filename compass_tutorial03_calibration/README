@@ -1,0 +1,11 @@
+* Developed by Mark Williams
+* Created January 2015
+
+
+To compile;
+gcc -o compass_tutorial03 compass_tutorial03.c -lm
+gcc -o compass_tutorial03_calibration compass_tutorial03_calibration.c 
+
+
+More info here;
+http://ozzmaker.com/2014/12/01/compass1/
