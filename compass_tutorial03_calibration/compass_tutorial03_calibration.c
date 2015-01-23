@@ -48,7 +48,7 @@ int file;
 void  INThandler(int sig)
 {
         signal(sig, SIG_IGN);
-        printf("\n\n\nCopy the below definitions to the start of compass.c and compile. \n");
+        printf("\n\n\nCopy the below definitions to the start of your compass program. \n");
         printf("\033[01;36m#define magXmax %i\n#define magYmax %i\n#define magZmax %i\n", magXmax,magYmax,magZmax);
         printf("\033[01;36m#define magXmin %i\n#define magYmin %i\n#define magZmin %i\n\n", magXmin,magYmin,magZmin);
 
