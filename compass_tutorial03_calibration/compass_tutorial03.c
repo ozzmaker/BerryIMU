@@ -33,6 +33,7 @@ void writeMagReg(uint8_t reg, uint8_t value);
 void readBlock(uint8_t command, uint8_t size, uint8_t *data);
 void readMAG(int * m);
 
+
 #define magXmax 1210
 #define magYmax 1245
 #define magZmax 1178
@@ -84,7 +85,7 @@ int	avgs[3];
 		scaledMag[2]  = (float)(magRaw[2] - magZmin) / (magZmax - magZmin) * 2 - 1;
 
 
-   		printf(" scaled X %f    \tscaled Y %f \tscaled Z %f \n", scaledMag[0], scaledMag[1], scaledMag[2]);
+		printf("magRaw X %i    \tmagRaw Y %i \tMagRaw Z %i \n", magRaw[0],magRaw[1],magRaw[2]);
 
 		//Only needed if the heading value does not increase when the magnetometer is rotated clockwise
 		scaledMag[1] = -scaledMag[1];
@@ -92,9 +93,24 @@ int	avgs[3];
 		//Compute heading
 	        float heading = 180 * atan2(scaledMag[1],scaledMag[0])/M_PI;
 
+
 		//Convert heading to 0 - 360
         	if(heading < 0)
 	  	      heading += 360;
+
+
+		//Local declination in mrads into radians
+		float declination = 217.9 / 1000.0;
+
+		//Add the declination correction to our current heading
+		heading += declination * 180/M_PI;
+
+
+		//Correct the heading if declination forces it over 360
+		if ( heading > 360)
+			heading -= 360;
+
+
 
 		printf("heading %7.3f \t ", heading);
 
