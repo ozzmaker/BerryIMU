@@ -42,6 +42,19 @@
 #define M_PI 3.14159265358979323846
 
 
+//Used by Kalman Filters
+float Q_angle  =  0.01;
+float Q_gyro   =  0.0003;
+float R_angle  =  0.01;
+float x_bias = 0;
+float y_bias = 0;
+float XP_00 = 0, XP_01 = 0, XP_10 = 0, XP_11 = 0;
+float YP_00 = 0, YP_01 = 0, YP_10 = 0, YP_11 = 0;
+float KFangleX = 0.0;
+float KFangleY = 0.0;
+
+float kalmanFilterX(float accAngle, float gyroRate);
+float kalmanFilterY(float accAngle, float gyroRate);
 
 
 void  INThandler(int sig)
@@ -114,7 +127,7 @@ int main(int argc, char *argv[])
 	readGYR(gyr_raw);
 
 	//Convert Gyro raw to degrees per second
-	rate_gyr_x = (float) gyr_raw[0] * G_GAIN;
+	rate_gyr_x = (float) gyr_raw[0]  * G_GAIN;
 	rate_gyr_y = (float) gyr_raw[1]  * G_GAIN;
 	rate_gyr_z = (float) gyr_raw[2]  * G_GAIN;
 
@@ -131,6 +144,11 @@ int main(int argc, char *argv[])
 	//Convert Accelerometer values to degrees
 	AccXangle = (float) (atan2(acc_raw[1],acc_raw[2])+M_PI)*RAD_TO_DEG;
 	AccYangle = (float) (atan2(acc_raw[2],acc_raw[0])+M_PI)*RAD_TO_DEG;
+
+
+
+
+
 
         //Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
         //Two different pieces of code are used depending on how your IMU is mounted.
@@ -151,13 +169,17 @@ int main(int argc, char *argv[])
 	else
 		AccYangle += (float)90;
 
+	//Kalman Filter
+	float kalmanX = kalmanFilterX(AccXangle, rate_gyr_x);
+	float kalmanY = kalmanFilterY(AccYangle, rate_gyr_y);
+	printf ("\033[22;31mkalmanX %7.3f  \033[22;36mkalmanY %7.3f\t\e[m",kalmanX,kalmanY);
 
 	//Complementary filter used to combine the accelerometer and gyro values.
 	CFangleX=AA*(CFangleX+rate_gyr_x*DT) +(1 - AA) * AccXangle;
 	CFangleY=AA*(CFangleY+rate_gyr_y*DT) +(1 - AA) * AccYangle;
 
 
-	printf ("   GyroX  %7.3f \t AccXangle \e[m %7.3f \t \033[22;31mCFangleX %7.3f\033[0m\t GyroY  %7.3f \t AccYangle %7.3f \t \033[22;36mCFangleY %7.3f\t\033[0m\n",gyroXangle,AccXangle,CFangleX,gyroYangle,AccYangle,CFangleY);
+	printf ("GyroX  %7.3f \t AccXangle \e[m %7.3f \t \033[22;31mCFangleX %7.3f\033[0m\t GyroY  %7.3f \t AccYangle %7.3f \t \033[22;36mCFangleY %7.3f\t\033[0m\n",gyroXangle,AccXangle,CFangleX,gyroYangle,AccYangle,CFangleY);
 
 	//Each loop should be at least 20ms.
         while(mymillis() - startInt < (DT*1000))
@@ -168,4 +190,65 @@ int main(int argc, char *argv[])
 	printf("Loop Time %d\t", mymillis()- startInt);
     }
 }
+
+
+
+
+
+  float kalmanFilterX(float accAngle, float gyroRate)
+  {
+    float  y, S;
+    float K_0, K_1;
+
+
+    KFangleX += DT * (gyroRate - x_bias);
+
+    XP_00 +=  - DT * (XP_10 + XP_01) + Q_angle * DT;
+    XP_01 +=  - DT * XP_11;
+    XP_10 +=  - DT * XP_11;
+    XP_11 +=  + Q_gyro * DT;
+
+    y = accAngle - KFangleX;
+    S = XP_00 + R_angle;
+    K_0 = XP_00 / S;
+    K_1 = XP_10 / S;
+
+    KFangleX +=  K_0 * y;
+    x_bias  +=  K_1 * y;
+    XP_00 -= K_0 * XP_00;
+    XP_01 -= K_0 * XP_01;
+    XP_10 -= K_1 * XP_00;
+    XP_11 -= K_1 * XP_01;
+
+    return KFangleX;
+  }
+
+
+  float kalmanFilterY(float accAngle, float gyroRate)
+  {
+    float  y, S;
+    float K_0, K_1;
+
+
+    KFangleY += DT * (gyroRate - y_bias);
+
+    YP_00 +=  - DT * (YP_10 + YP_01) + Q_angle * DT;
+    YP_01 +=  - DT * YP_11;
+    YP_10 +=  - DT * YP_11;
+    YP_11 +=  + Q_gyro * DT;
+
+    y = accAngle - KFangleY;
+    S = YP_00 + R_angle;
+    K_0 = YP_00 / S;
+    K_1 = YP_10 / S;
+
+    KFangleY +=  K_0 * y;
+    y_bias  +=  K_1 * y;
+    YP_00 -= K_0 * YP_00;
+    YP_01 -= K_0 * YP_01;
+    YP_10 -= K_1 * YP_00;
+    YP_11 -= K_1 * YP_01;
+
+    return KFangleY;
+  }
 
