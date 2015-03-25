@@ -7,7 +7,7 @@ Go here for more information;
 http://ozzmaker.com/2014/12/11/berryimu/
 
 Compile with;
-gcc -o gyro_accelerometer_tutorial01 -l rt gyro_accelerometer_tutorial01.c -lm
+gcc -o gyro_accelerometer_tutorial03 -l rt gyro_accelerometer_tutorial03.c -lm
 
 
 
