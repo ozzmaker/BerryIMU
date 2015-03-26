@@ -70,9 +70,7 @@ void readMAG(int  *m)
 void readGYR(int *g)
 {
 	uint8_t block[6];
-
         selectDevice(file,GYR_ADDRESS);
-
 	readBlock(0x80 | OUT_X_L_G, sizeof(block), block);
 
         *g = (int16_t)(block[0] | block[1] << 8);
