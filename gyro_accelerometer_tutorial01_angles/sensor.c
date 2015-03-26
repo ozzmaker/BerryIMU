@@ -58,7 +58,7 @@ void readACC(int  *a)
 void readMAG(int  *m)
 {
         uint8_t block[6];
-
+        selectDevice(file,MAG_ADDRESS);
         readBlock(0x80 | OUT_X_L_M, sizeof(block), block);
 
         *m = (int16_t)(block[0] | block[1] << 8);
