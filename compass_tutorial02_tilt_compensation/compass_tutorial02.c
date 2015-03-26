@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
 		printf("heading %7.3f \t ", heading);
 
 		//Normalize accelerometer raw values.
-                accXnorm = accRaw[0]/sqrt(accRaw[0]* accRaw[0]+ accRaw[1] * accRaw[1] + accRaw[2] * accRaw[2]);
-                accYnorm =accRaw[1]/sqrt(accRaw[0] *accRaw[0] + accRaw[1] * accRaw[1] + accRaw[2] * accRaw[2]);
+                accXnorm = accRaw[0]/sqrt(accRaw[0] * accRaw[0] + accRaw[1] * accRaw[1] + accRaw[2] * accRaw[2]);
+                accYnorm = accRaw[1]/sqrt(accRaw[0] * accRaw[0] + accRaw[1] * accRaw[1] + accRaw[2] * accRaw[2]);
 
 		//Calculate pitch and roll
 		pitch = asin(accXnorm);

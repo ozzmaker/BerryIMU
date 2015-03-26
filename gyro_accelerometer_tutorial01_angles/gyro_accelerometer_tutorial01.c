@@ -72,9 +72,9 @@ int main(int argc, char *argv[])
 	float rate_gyr_x = 0.0;    // [deg/s]
 	float rate_gyr_z = 0.0;     // [deg/s]
 
-	int  acc_raw[3];
-	int  mag_raw[3];
-	int  gyr_raw[3];
+	int  accRaw[3];
+	int  magRaw[3];
+	int  gyrRaw[3];
 
 
 
@@ -110,13 +110,13 @@ int main(int argc, char *argv[])
 
 
 	//read ACC and GYR data
-	readACC(acc_raw);
-	readGYR(gyr_raw);
+	readACC(accRaw);
+	readGYR(gyrRaw);
 
 	//Convert Gyro raw to degrees per second
-	rate_gyr_x = (float) gyr_raw[0] * G_GAIN;
-	rate_gyr_y = (float) gyr_raw[1]  * G_GAIN;
-	rate_gyr_z = (float) gyr_raw[2]  * G_GAIN;
+	rate_gyr_x = (float) gyrRaw[0] * G_GAIN;
+	rate_gyr_y = (float) gyrRaw[1]  * G_GAIN;
+	rate_gyr_z = (float) gyrRaw[2]  * G_GAIN;
 
 
 
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
 
 
 	//Convert Accelerometer values to degrees
-	AccXangle = (float) (atan2(acc_raw[1],acc_raw[2])+M_PI)*RAD_TO_DEG;
-	AccYangle = (float) (atan2(acc_raw[2],acc_raw[0])+M_PI)*RAD_TO_DEG;
+	AccXangle = (float) (atan2(accRaw[1],accRaw[2])+M_PI)*RAD_TO_DEG;
+	AccYangle = (float) (atan2(accRaw[2],accRaw[0])+M_PI)*RAD_TO_DEG;
 
         //Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
         //Two different pieces of code are used depending on how your IMU is mounted.
