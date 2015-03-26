@@ -46,8 +46,7 @@ void readACC(int  *a)
 {
         uint8_t block[6];
         selectDevice(file,ACC_ADDRESS);
-                readBlock(0x80 | OUT_X_L_A, sizeof(block), block);
-
+        readBlock(0x80 | OUT_X_L_A, sizeof(block), block);
         *a = (int16_t)(block[0] | block[1] << 8);
         *(a+1) = (int16_t)(block[2] | block[3] << 8);
         *(a+2) = (int16_t)(block[4] | block[5] << 8);
@@ -58,7 +57,7 @@ void readACC(int  *a)
 void readMAG(int  *m)
 {
         uint8_t block[6];
-
+        selectDevice(file,MAG_ADDRESS);
         readBlock(0x80 | OUT_X_L_M, sizeof(block), block);
 
         *m = (int16_t)(block[0] | block[1] << 8);
@@ -70,9 +69,7 @@ void readMAG(int  *m)
 void readGYR(int *g)
 {
 	uint8_t block[6];
-
         selectDevice(file,GYR_ADDRESS);
-
 	readBlock(0x80 | OUT_X_L_G, sizeof(block), block);
 
         *g = (int16_t)(block[0] | block[1] << 8);
