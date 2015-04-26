@@ -138,5 +138,9 @@ int graphics( float heading)
 	// send the screen surface to be displayed
         SDL_Flip(screen);
 
+
+        SDL_FreeSurface(screen);
+        SDL_FreeSurface(rotation);
+
         return 0;
 }
