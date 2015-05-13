@@ -4,7 +4,7 @@
 
 To compile;
 
-gcc -g -o compass_tutorial04 compass_tutorial04.c -lSDL `sdl-config --cflags` `sdl-config --libs` -lm -lSDL_ttflSDL_image -lSDL_gfx
+gcc -g -o compass_tutorial04 compass_tutorial04.c -lSDL `sdl-config --cflags` `sdl-config --libs` -lm -lSDL_ttflSDL_image -lSDL_gfx -lSDL
 
 More info here;
 http://ozzmaker.com/
