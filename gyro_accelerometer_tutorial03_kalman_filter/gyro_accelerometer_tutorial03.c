@@ -102,13 +102,6 @@ int main(int argc, char *argv[])
 	int startInt  = mymillis();
 	struct  timeval tvBegin, tvEnd,tvDiff;
 
-	signed int acc_y = 0;
-	signed int acc_x = 0;
-	signed int acc_z = 0;
-	signed int gyr_x = 0;
-	signed int gyr_y = 0;
-	signed int gyr_z = 0;
-
 
         signal(SIGINT, INThandler);
 
