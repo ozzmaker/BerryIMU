@@ -1,5 +1,5 @@
 /*
-	This program  reads the angles from the acceleromter and gyrscope
+	This program  reads the angles from the accelerometer and gyroscope
 	on a BerryIMU connected to a Raspberry Pi.
 	http://ozzmaker.com/
 
