@@ -138,7 +138,8 @@ int graphics( float heading)
 	// send the screen surface to be displayed
         SDL_Flip(screen);
 
-
+        SDL_FreeSurface(currentDegressRotated);
+        SDL_FreeSurface(textSurface);
         SDL_FreeSurface(screen);
         SDL_FreeSurface(rotation);
 
