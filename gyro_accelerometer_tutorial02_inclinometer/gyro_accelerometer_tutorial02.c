@@ -259,7 +259,7 @@ int startSDL()
 int graphics(float carRoll, float carPitch)
 {
 
-	//Set all pixals to black to clear the last image.
+	//Set all pixels to black to clear the last image.
         SDL_FillRect(screen,NULL,0x000000);
 
 	//Position of both jeep images.
@@ -279,7 +279,7 @@ int graphics(float carRoll, float carPitch)
         inclinometerJeepSidePosition.x -= rotationInclinometerJeepSide->w/2-compatibleInclinometerJeepSide->w/2;
         inclinometerJeepSidePosition.y -= rotationInclinometerJeepSide->h/2-compatibleInclinometerJeepSide->h/2;
 
-	//Blit the three iamges to the surface.
+	//Blit the three images to the surface.
 	SDL_BlitSurface( compatibleInclinometerOverlay, NULL, screen, &inclinometerJeepOverlayPosition);
         SDL_BlitSurface( rotationInclinometerJeepFront, NULL, screen, &inclinometerJeepFrontPosition);
         SDL_BlitSurface( rotationInclinometerJeepSide, NULL, screen, &inclinometerJeepSidePosition);
