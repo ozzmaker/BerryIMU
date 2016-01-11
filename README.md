@@ -9,6 +9,8 @@ Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details
 ![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd5-300.jpg?raw=true "")
 ![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/07/BerryIMU-Arduino-300.jpg "")
 
+![BerryIMU](http://ozzmaker.com/wp-content/uploads/2016/01/BerryIMUProd6-300.jpg "")
+
 
 
 
