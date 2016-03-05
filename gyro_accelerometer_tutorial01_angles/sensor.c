@@ -131,7 +131,7 @@ void enableIMU()
         }
 
         // Enable accelerometer.
-        writeAccReg(CTRL_REG1_XM, 0b01100111); //  z,y,x axis enabled, continuos update,  100Hz data rate
+        writeAccReg(CTRL_REG1_XM, 0b01100111); //  z,y,x axis enabled, continuous update,  100Hz data rate
         writeAccReg(CTRL_REG2_XM, 0b00100000); // +/- 16G full scale
 
         //Enable the magnetometer
