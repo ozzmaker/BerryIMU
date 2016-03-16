@@ -224,7 +224,7 @@ while True:
 	magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
 	magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)
 
-	#Calculate tiles compensated heading
+	#Calculate tilt compensated heading
         tiltCompensatedHeading = 180 * math.atan2(magYcomp,magXcomp)/M_PI
 
         if tiltCompensatedHeading < 0:
