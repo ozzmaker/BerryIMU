@@ -178,10 +178,10 @@ while True:
 
 
 
-
+	###################Correct rotation value########################
         #Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
         #Two different pieces of code are used depending on how your IMU is mounted.
-        #If IMU is upside down
+        #If IMU is upside down Skull logo is facing up
 	#
         #if AccXangle >180:
         #        AccXangle -= 360.0
@@ -190,12 +190,13 @@ while True:
         #        AccYangle -= 360.0
 	
 
-        #If IMU is up the correct way, use these lines
+        #If IMU is up the correct way, Skull logo is facing down. use these lines
         AccXangle -= 180.0
 	if AccYangle > 90:
 	        AccYangle -= 270.0
 	else:
 		AccYangle += 90.0
+	############################ END ##################################
 
 
         #Complementary filter used to combine the accelerometer and gyro values.
@@ -215,10 +216,16 @@ while True:
         accXnorm = ACCx/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
 	accYnorm = ACCy/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
 
-
-	#Calculate pitch and roll
+	###################Calculate pitch and roll#########################
+	#Us these two lines when the IMU is up the right way. Skull logo is facing down
 	pitch = math.asin(accXnorm)
 	roll = -math.asin(accYnorm/math.cos(pitch))
+
+	#Us these two lines when the IMU is upside down. Skull logo is facing up
+	#pitch = -math.asin(accXnorm)
+	#roll = math.asin(accYnorm/math.cos(pitch))
+
+	############################ END ##################################
 
 	#Calculate the new tilt compensated values
 	magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
