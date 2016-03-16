@@ -31,7 +31,7 @@ RAD_TO_DEG = 57.29578
 M_PI = 3.14159265358979323846
 G_GAIN = 0.070  # [deg/s/LSB]  If you change the dps for gyro, you need to update this value accordingly
 LP = 0.041    	# Loop period = 41ms.   This needs to match the time it takes each loop to run
-AA =  0.80      # Complementary filter constant
+AA =  0.40      # Complementary filter constant
 
 
 def writeACC(register,value):
