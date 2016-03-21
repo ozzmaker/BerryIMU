@@ -360,10 +360,25 @@ while True:
         if tiltCompensatedHeading < 0:
                 tiltCompensatedHeading += 360
 
- 	print ("\033[1;34;40mACCX Angle %5.2f ACCY Angle %5.2f\033[1;31;40m\tGRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f \033[1;35;40m    \tCFangleX Angle %5.2f \033[1;36;40m  CFangleY Angle %5.2f \33[1;32;40m  HEADING  %5.2f \33[1;37;40m tiltCompensatedHeading %5.2f\033[0m  " % (AccXangle, AccYangle,gyroXangle,gyroYangle,gyroZangle,CFangleX,CFangleY,heading,tiltCompensatedHeading))
-	#print ("\033[1;31;40mCFangleX %5.2f \033[1;35;40m  CFangleY %5.2f \33[1;32;40m   \033[1;31;40m kalmanX %5.2f  \033[1;35;40m kalmanY %5.2f  " % (CFangleX,CFangleY,kalmanX,kalmanY))
 
-	#slow program down a bit
+
+	if 1:			#Change to '0' to stop showing the angles from the accelerometer
+ 		print ("\033[1;34;40mACCX Angle %5.2f ACCY Angle %5.2f  \033[0m  " % (AccXangle, AccYangle)),
+	
+	if 1:			#Change to '0' to stop  showing the angles from the gyro
+		print ("\033[1;31;40m\tGRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f" % (gyroXangle,gyroYangle,gyroZangle)),
+
+ 	if 1:			#Change to '0' to stop  showing the angles from the complementary filter
+		print ("\033[1;35;40m   \tCFangleX Angle %5.2f \033[1;36;40m  CFangleY Angle %5.2f \33[1;32;40m" % (CFangleX,CFangleY)),
+		
+ 	if 1:			#Change to '0' to stop  showing the heading
+		print ("HEADING  %5.2f \33[1;37;40m tiltCompensatedHeading %5.2f" % (heading,tiltCompensatedHeading)),
+		
+	if 1:			#Change to '0' to stop  showing the angles from the Kalmin filter
+		print ("\033[1;31;40m kalmanX %5.2f  \033[1;35;40m kalmanY %5.2f  " % (kalmanX,kalmanY))
+
+	
+	#slow program down a bit, makes the output more readable
 	time.sleep(0.03)
 
 
