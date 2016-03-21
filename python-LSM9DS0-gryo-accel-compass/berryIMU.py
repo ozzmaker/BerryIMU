@@ -5,7 +5,7 @@
 #
 #	http://ozzmaker.com/
 #
-#    Copyright (C) 2015  Mark Williams
+#    Copyright (C) 2016  Mark Williams
 #    This library is free software; you can redistribute it and/or
 #    modify it under the terms of the GNU Library General Public
 #    License as published by the Free Software Foundation; either
@@ -281,10 +281,10 @@ while True:
 	####################################################################
 	######################Correct rotation value########################
 	####################################################################
-    #Change the rotation value of the accelerometer to -/+ 180 and
-    #move the Y axis '0' point to up.
-    #
-    #Two different pieces of code are used depending on how your IMU is mounted.
+	#Change the rotation value of the accelerometer to -/+ 180 and
+    	#move the Y axis '0' point to up.
+    	#
+    	#Two different pieces of code are used depending on how your IMU is mounted.
 	#If IMU is up the correct way, Skull logo is facing down, Use these lines
 	AccXangle -= 180.0
 	if AccYangle > 90:
@@ -297,10 +297,10 @@ while True:
 	#
 	#If IMU is upside down E.g Skull logo is facing up;
 	#if AccXangle >180:
-    #        AccXangle -= 360.0
+    	#        AccXangle -= 360.0
 	#AccYangle-=90
 	#if (AccYangle >180):
-    #        AccYangle -= 360.0
+    	#        AccYangle -= 360.0
 	############################ END ##################################
 
 
