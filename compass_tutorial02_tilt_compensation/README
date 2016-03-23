@@ -5,6 +5,9 @@
 To compile;
 gcc -o compass_tutorial02 compass_tutorial02.c -lm
 
+To run;
+sudo ./compass_tutorial02
+
 
 More info here;
 http://ozzmaker.com/compass2
