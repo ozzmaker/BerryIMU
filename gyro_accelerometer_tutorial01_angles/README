@@ -9,5 +9,8 @@ http://ozzmaker.com/berryimu/
 Compile with;
 gcc -o gyro_accelerometer_tutorial01 -l rt gyro_accelerometer_tutorial01.c -lm
 
+To run;
+sudo ./gyro_accelerometer_tutorial01
+
 
 
