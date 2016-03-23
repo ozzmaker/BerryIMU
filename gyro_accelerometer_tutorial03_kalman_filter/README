@@ -10,4 +10,5 @@ Compile with;
 gcc -o gyro_accelerometer_tutorial03 -l rt gyro_accelerometer_tutorial03.c -lm
 
 
-
+Run with;
+sudo ./gyro_accelerometer_tutorial03
