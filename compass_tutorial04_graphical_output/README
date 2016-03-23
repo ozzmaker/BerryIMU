@@ -3,8 +3,11 @@
 
 
 To compile;
-
 gcc -g -o compass_tutorial04 compass_tutorial04.c -lSDL `sdl-config --cflags` `sdl-config --libs` -lm -lSDL_ttf -lSDL_image -lSDL_gfx -lSDL
+
+
+To run;
+sudo ./compass_tutorial04
 
 More info here;
 http://ozzmaker.com/compass04/
