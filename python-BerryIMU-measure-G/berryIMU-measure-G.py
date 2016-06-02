@@ -15,8 +15,6 @@
 
 
 import smbus
-import time
-import math
 from LSM9DS0 import *
 import datetime
 bus = smbus.SMBus(1)
