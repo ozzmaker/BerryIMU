@@ -1,12 +1,4 @@
 #!/usr/bin/python
-#	This is the base code needed to get usable angles from a BerryIMU 
-#	using a Complementary filter. The readings can be improved by 
-#	adding more filters, E.g Kalman, Low pass, median filter, etc..
-#
-#	For this code to work correctly, BerryIMU must be facing the
-#	correct way up. This is when the Skull Logo on the PCB is facing down.
-#	http://ozzmaker.com/
-#
 #    Copyright (C) 2016  Mark Williams
 #    This library is free software; you can redistribute it and/or
 #    modify it under the terms of the GNU Library General Public
