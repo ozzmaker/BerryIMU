@@ -139,8 +139,8 @@ void loop() {
         {
             delay(1);
         }
-  Serial.print( millis()- startTime);
-  Serial.print("\n");
+  Serial.println( millis()- startTime);
+ 
 
 
 }
