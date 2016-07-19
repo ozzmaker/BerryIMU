@@ -66,10 +66,6 @@ def kalmanFilterY ( accAngle, gyroRate, DT):
 	global Q_angle
 	global Q_gyro
 	global y_bias
-	global XP_00
-	global XP_01
-	global XP_10
-	global XP_11
 	global YP_00
 	global YP_01
 	global YP_10
@@ -109,30 +105,27 @@ def kalmanFilterX ( accAngle, gyroRate, DT):
 	global XP_01
 	global XP_10
 	global XP_11
-	global YP_00
-	global YP_01
-	global YP_10
-	global YP_11
+
 
 	KFangleX = KFangleX + DT * (gyroRate - x_bias)
 
-	YP_00 = YP_00 + ( - DT * (YP_10 + YP_01) + Q_angle * DT )
-	YP_01 = YP_01 + ( - DT * YP_11 )
-	YP_10 = YP_10 + ( - DT * YP_11 )
-	YP_11 = YP_11 + ( + Q_gyro * DT )
+	XP_00 = XP_00 + ( - DT * (XP_10 + XP_01) + Q_angle * DT )
+	XP_01 = XP_01 + ( - DT * XP_11 )
+	XP_10 = XP_10 + ( - DT * XP_11 )
+	XP_11 = XP_11 + ( + Q_gyro * DT )
 
 	x = accAngle - KFangleX
-	S = YP_00 + R_angle
-	K_0 = YP_00 / S
-	K_1 = YP_10 / S
+	S = XP_00 + R_angle
+	K_0 = XP_00 / S
+	K_1 = XP_10 / S
 	
 	KFangleX = KFangleX + ( K_0 * x )
 	x_bias = x_bias + ( K_1 * x )
 	
-	YP_00 = YP_00 - ( K_0 * YP_00 )
-	YP_01 = YP_01 - ( K_0 * YP_01 )
-	YP_10 = YP_10 - ( K_1 * YP_00 )
-	YP_11 = YP_11 - ( K_1 * YP_01 )
+	XP_00 = XP_00 - ( K_0 * XP_00 )
+	XP_01 = XP_01 - ( K_0 * XP_01 )
+	XP_10 = XP_10 - ( K_1 * XP_00 )
+	XP_11 = XP_11 - ( K_1 * XP_01 )
 	
 	return KFangleX
 
