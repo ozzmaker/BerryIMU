@@ -3,7 +3,9 @@
 
 This program demonstrates how to convert the raw values from an accelerometer to Gs
 
-http://ozzmaker.com/
+
+
+http://ozzmaker.com/accelerometer-to-g/
 
 Run with:
 sudo python berryIMU-measure-G.py
