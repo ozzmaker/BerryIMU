@@ -16,7 +16,7 @@
 
 import smbus
 from LSM9DS0 import *
-import datetime
+import time
 bus = smbus.SMBus(1)
 
 
