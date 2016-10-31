@@ -317,12 +317,12 @@ while True:
 		CFangleY = -angleLimit
 		
 	
-	if CFangleY > 70 or CFangleY <-70:										#If Y angle is not between -70 and 70, then only show large horizontal bar.
-		ACC_LPF_FACTOR = 0.05												#lower low pass filter
+	if CFangleY > 70 or CFangleY <-70:					#If Y angle is not between -70 and 70, then only show large horizontal bar.
+		ACC_LPF_FACTOR = 0.05						#lower low pass filter
 		hBposition = (int(scaleHonly(CFangleZ	)),190)
-		screen.blit(img_background_H_only, screen_rect)						#Blit the new image to the surface
-		screen.blit(img_Hbubble_H_only, hBposition)							#Blit the new image to the surface
-		screen.blit(img_overlay_H_only, screen_rect)						#Blit the new image to the surface
+		screen.blit(img_background_H_only, screen_rect)			#Blit the new image to the surface
+		screen.blit(img_Hbubble_H_only, hBposition)			#Blit the new image to the surface
+		screen.blit(img_overlay_H_only, screen_rect)			#Blit the new image to the surface
 	else:
 		ACC_LPF_FACTOR = 0.3
 		
