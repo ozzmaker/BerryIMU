@@ -11,12 +11,19 @@ Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details
 
 
 ![BerryIMU]( http://ozzmaker.com/wp-content/uploads/2016/01/BerryIMUProd6-300-git.jpg "")
+![BerryIMU]( http://ozzmaker.com/wp-content/uploads/2016/11/ESP8266Thing-300.jpg "")
+![BerryIMU]( http://ozzmaker.com/wp-content/uploads/2016/11/ESP8266Huzzah-300.jpg "")
 
 
 
 
 <h1>Wiring Diagrams</h1>
 
-
-![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/BerryIMUWire2.png?raw=true "Wiring Diagram")
+<h2>Raspberry Pi</h2>
+![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/RaspberryPiBerryIMUWire1.png "Wiring Diagram")
+<h2>Arduino</h2>
 ![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/07/BerryIMUArduinoWire1.png "Wiring Diagram")
+<h2>Adafruit Feather Hazzuh!</h2>
+![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/AdafruitHuzzahBerryIMUWire1.png "Wiring Diagram")
+<h2>Sparkfun Thing</h2>
+![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/SparkfunThingDevBerryIMUWire1.png "Wiring Diagram")
