@@ -85,7 +85,7 @@ void handleroot()
 void setup()
 {
   // Initialise I2C communication
-   Wire.begin(4,5);
+   Wire.begin(4,5);  //Wire.begin([SDA], [SCL])
   // Initialise serial communication, set baud rate = 115200
   Serial.begin(115200);
 
