@@ -1,7 +1,7 @@
 /*
   This program  reads the angles and heading from the accelerometer, gyroscope
    and compass on a BerryIMU connected to an ESP8266. It also creates a simple
-   web page which shows these values and refreshes every 1 secons.
+   web page which shows these values and refreshes every 1 seconds.
    
   http://ozzmaker.com/
   
@@ -64,6 +64,9 @@ void handleroot()
 {
 
   //Create webpage with BerryIMU data which is updated every 1 seconds
+  server.sendContent("HTTP/1.1 200 OK\r\n"); //send new p\r\nage
+  server.sendContent("Content-Type: text/html\r\n");
+  server.sendContent("\r\n");
   server.sendContent
   ("<html><head><meta http-equiv='refresh' content='1'</meta>"
   "<h3 style=text-align:center;font-size:200%;color:RED;>BerryIMU and ESP8266</h3>"
