@@ -58,7 +58,7 @@ def readACCz():
 	
 #initialise the accelerometer
 writeACC(CTRL_REG1_XM, 0b01100111) #z,y,x axis enabled, continuos update,  100Hz data rate
-writeACC(CTRL_REG2_XM, 0b00010000) #+/- 8G full scale
+writeACC(CTRL_REG2_XM, 0b00011000) #+/- 8G full scale
 
 
 
