@@ -64,7 +64,7 @@ void handleroot()
 {
 
   //Create webpage with BerryIMU data which is updated every 1 seconds
-  server.sendContent("HTTP/1.1 200 OK\r\n"); //send new p\r\nage
+  server.sendContent("HTTP/1.1 200 OK\r\n"); //send new page
   server.sendContent("Content-Type: text/html\r\n");
   server.sendContent("\r\n");
   server.sendContent
