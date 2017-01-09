@@ -55,8 +55,8 @@ uint32_t lowestRAM = 9999999999;
 double T,F,P;
 
 
-const char* ssid = "AC1750-2.4";
-const char* password = "Ms001710";
+const char* ssid = "******************";
+const char* password = "***********************";
 
 
 int count = 0;
