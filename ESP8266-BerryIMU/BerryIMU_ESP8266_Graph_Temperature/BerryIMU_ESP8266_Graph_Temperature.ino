@@ -141,7 +141,7 @@ void loop()
   //Get free RAM
   freeRAM = system_get_free_heap_size();
  if (freeRAM < lowestRAM    )  lowestRAM = freeRAM;
-  Serial.print(" ## freeRAM : ");
+  Serial.print("  freeRAM : ");
   Serial.print(freeRAM);
   Serial.println(" bytes ");
 
