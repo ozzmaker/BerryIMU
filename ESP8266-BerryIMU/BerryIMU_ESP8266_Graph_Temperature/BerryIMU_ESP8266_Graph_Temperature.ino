@@ -48,12 +48,8 @@ const int NTP_PACKET_SIZE = 48;       // NTP time is in the first 48 bytes of me
 byte packetBuffer[NTP_PACKET_SIZE];   // buffer to hold incoming & outgoing packets
 
 
-
-
 uint32_t freeRAM;
-uint32_t lowestRAM = 9999999999;
 double T,F,P;
-
 
 const char* ssid = "******************";
 const char* password = "***********************";
@@ -147,9 +143,8 @@ void loop()
  if (freeRAM < lowestRAM    )  lowestRAM = freeRAM;
   Serial.print(" ## freeRAM : ");
   Serial.print(freeRAM);
-  Serial.print(" bytes ");
-  Serial.print(" lowestRAM ");
-  Serial.println( lowestRAM );
+  Serial.println(" bytes ");
+
   
   
   WiFiClient client = server.available();
