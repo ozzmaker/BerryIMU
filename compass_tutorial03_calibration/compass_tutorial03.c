@@ -67,9 +67,9 @@ int main(int argc, char *argv[])
 	writeMagReg( CTRL_REG5_XM, 0b11110000);   // Temp enable, M data rate = 50Hz
 	writeMagReg( CTRL_REG6_XM, 0b01100000);   // +/-12gauss
 	writeMagReg( CTRL_REG7_XM, 0b00000000);   // Continuous-conversion mode
-		int magRawMax[3];
-		int magRawMin[3];
-int	avgs[3];
+	int magRawMax[3];
+	int magRawMin[3];
+	int	avgs[3];
 	while(1)
 	{
 		readMAG(magRaw);
