@@ -75,7 +75,7 @@ int	avgs[3];
 		readMAG(magRaw);
 
 		//Apply hard iron calibration
-		magRaw[0]-= (magXmin + magXmax) /2 ;
+		magRaw[0] -= (magXmin + magXmax) /2 ;
 		magRaw[1] -= (magYmin + magYmax) /2 ;
 		magRaw[2] -= (magZmin + magZmax) /2 ;
 
