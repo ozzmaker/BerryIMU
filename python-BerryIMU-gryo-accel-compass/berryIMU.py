@@ -339,7 +339,7 @@ while True:
 	####################################################################
 	###################Calculate pitch and roll#########################
 	####################################################################
-	#Us these two lines when the IMU is up the right way. Skull logo is facing down
+	#Use these two lines when the IMU is up the right way. Skull logo is facing down
 	pitch = math.asin(accXnorm)
 	roll = -math.asin(accYnorm/math.cos(pitch))
 	#
