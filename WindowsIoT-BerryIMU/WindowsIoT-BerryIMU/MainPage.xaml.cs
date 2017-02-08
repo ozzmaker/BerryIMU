@@ -105,7 +105,7 @@ namespace BERRYIMU
 
             
             // Now that everything is initialized, create a timer so we read data every DT
-            periodicTimer = new Timer(this.TimerCallback, null, 0,DT);// );
+            periodicTimer = new Timer(this.TimerCallback, null, 0,DT);
 		}
 
 		private void MainPage_Unloaded(object sender, object args)
