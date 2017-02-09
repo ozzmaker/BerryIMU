@@ -19,129 +19,116 @@
     Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
     MA 02111-1307, USA
 */
+
 #include <stdint.h>
 #include "linux/i2c-dev.h"
 #include "LSM9DS0.h"
-int file;
 
-void  readBlock(uint8_t command, uint8_t size, uint8_t *data)
+int imu_file = 0;
+
+void readBlock(uint8_t command, uint8_t size, uint8_t * data)
 {
-    int result = i2c_smbus_read_i2c_block_data(file, command, size, data);
-    if (result != size)
-    {
-        printf("Failed to read block from I2C.");
-        exit(1);
+    int result = i2c_smbus_read_i2c_block_data(imu_file, command, size, data);
+    if (result != size) {
+		printf("Failed to read block from I2C.");
+		exit(1);
     }
 }
 
-void selectDevice(int file, int addr)
+void selectDevice(int file, int address)
 {
-        if (ioctl(file, I2C_SLAVE, addr) < 0) {
-		 printf("Failed to select I2C device.");
-        }
+	if( ioctl(file, I2C_SLAVE, address) < 0)
+		printf("Failed to select I2C device.");
 }
 
-
-void readACC(int  *a)
-{
-        uint8_t block[6];
-        selectDevice(file,ACC_ADDRESS);
-        readBlock(0x80 | OUT_X_L_A, sizeof(block), block);
-
-        *a = (int16_t)(block[0] | block[1] << 8);
-        *(a+1) = (int16_t)(block[2] | block[3] << 8);
-        *(a+2) = (int16_t)(block[4] | block[5] << 8);
-
-}
-
-
-void readMAG(int  *m)
-{
-        uint8_t block[6];
-        selectDevice(file,MAG_ADDRESS);
-        readBlock(0x80 | OUT_X_L_M, sizeof(block), block);
-
-        *m = (int16_t)(block[0] | block[1] << 8);
-        *(m+1) = (int16_t)(block[2] | block[3] << 8);
-        *(m+2) = (int16_t)(block[4] | block[5] << 8);
-
-}
-
-void readGYR(int *g)
+void readAccelerometer(int16_t * data)
 {
 	uint8_t block[6];
-        selectDevice(file,GYR_ADDRESS);
+	selectDevice(imu_file, ACC_ADDRESS);
+	readBlock(0x80 | OUT_X_L_A, sizeof(block), block);
+	
+	*(data    ) = (int16_t)(block[0] | block[1] << 8);
+	*(data + 1) = (int16_t)(block[2] | block[3] << 8);
+	*(data + 2) = (int16_t)(block[4] | block[5] << 8);
+}
+
+void readMagnetometer(int16_t * data)
+{
+	uint8_t block[6];
+	selectDevice(imu_file, MAG_ADDRESS);
+	readBlock(0x80 | OUT_X_L_M, sizeof(block), block);
+	
+	*(data    ) = (int16_t)(block[0] | block[1] << 8);
+	*(data + 1) = (int16_t)(block[2] | block[3] << 8);
+	*(data + 2) = (int16_t)(block[4] | block[5] << 8);
+}
+
+void readGyroscope(int16_t * data)
+{
+	uint8_t block[6];
+	selectDevice(imu_file, GYR_ADDRESS);
 	readBlock(0x80 | OUT_X_L_G, sizeof(block), block);
 
-        *g = (int16_t)(block[0] | block[1] << 8);
-        *(g+1) = (int16_t)(block[2] | block[3] << 8);
-        *(g+2) = (int16_t)(block[4] | block[5] << 8);
+	*(data    ) = (int16_t)(block[0] | block[1] << 8);
+	*(data + 1) = (int16_t)(block[2] | block[3] << 8);
+	*(data + 2) = (int16_t)(block[4] | block[5] << 8);
 }
 
-
-void writeAccReg(uint8_t reg, uint8_t value)
+void writeAccelerometer(uint8_t reg, uint8_t value)
 {
-    selectDevice(file,ACC_ADDRESS);
-  int result = i2c_smbus_write_byte_data(file, reg, value);
-    if (result == -1)
-    {
-        printf ("Failed to write byte to I2C Acc.");
-        exit(1);
+	selectDevice(imu_file, ACC_ADDRESS);
+	int result = i2c_smbus_write_byte_data(imu_file, reg, value);
+	if (result == -1) {
+		printf ("Failed to write byte to I2C Accelerometer.");
+		exit(1);
     }
 }
 
-void writeMagReg(uint8_t reg, uint8_t value)
+void writeMagnetometer(uint8_t reg, uint8_t value)
 {
-    selectDevice(file,MAG_ADDRESS);
-  int result = i2c_smbus_write_byte_data(file, reg, value);
-    if (result == -1)
-    {
-        printf("Failed to write byte to I2C Mag.");
-        exit(1);
+	selectDevice(imu_file, MAG_ADDRESS);
+	int result = i2c_smbus_write_byte_data(imu_file, reg, value);
+	if (result == -1) {
+		printf("Failed to write byte to I2C Magnetometer.");
+		exit(1);
     }
 }
 
-
-void writeGyrReg(uint8_t reg, uint8_t value)
+void writeGyroscope(uint8_t reg, uint8_t value)
 {
-    selectDevice(file,GYR_ADDRESS);
-  int result = i2c_smbus_write_byte_data(file, reg, value);
-    if (result == -1)
-    {
-        printf("Failed to write byte to I2C Gyr.");
+	selectDevice(imu_file, GYR_ADDRESS);
+	int result = i2c_smbus_write_byte_data(imu_file, reg, value);
+	if (result == -1) {
+        printf("Failed to write byte to I2C Gyroscope.");
         exit(1);
     }
 }
-
 
 void enableIMU()
-{
+{	
+	char filename[32];
 
-	__u16 block[I2C_SMBUS_BLOCK_MAX];
-
-        int res, bus,  size;
-
-
-        char filename[20];
-        sprintf(filename, "/dev/i2c-%d", 1);
-        file = open(filename, O_RDWR);
-        if (file<0) {
+	sprintf(filename, "/dev/i2c-%d", 1);
+	
+	imu_file = open(filename, O_RDWR);
+	
+	if(imu_file < 0) {
 		printf("Unable to open I2C bus!");
-                exit(1);
-        }
-
-        // Enable accelerometer.
-        writeAccReg(CTRL_REG1_XM, 0b01100111); //  z,y,x axis enabled, continuous update,  100Hz data rate
-        writeAccReg(CTRL_REG2_XM, 0b00100000); // +/- 16G full scale
-
-        //Enable the magnetometer
-        writeMagReg( CTRL_REG5_XM, 0b11110000);   // Temp enable, M data rate = 50Hz
-        writeMagReg( CTRL_REG6_XM, 0b01100000);   // +/-12gauss
-        writeMagReg( CTRL_REG7_XM, 0b00000000);   // Continuous-conversion mode
-
-	 // Enable Gyro
-        writeGyrReg(CTRL_REG1_G, 0b00001111); // Normal power mode, all axes enabled
-        writeGyrReg(CTRL_REG4_G, 0b00110000); // Continuos update, 2000 dps full scale
+		exit(1);
+	}
+	
+	// Enable accelerometer
+	writeAccelerometer(CTRL_REG1_XM, 0b01100111); // enable X, Y, Z axes, set continuous update, 100 Hz data rate
+	writeAccelerometer(CTRL_REG2_XM, 0b00100000); // +/- 16 G full scale
+	
+	// Enable magnetometer
+	writeMagnetometer (CTRL_REG5_XM, 0b11110000); // Temp enable, M data rate = 50Hz
+	writeMagnetometer (CTRL_REG6_XM, 0b01100000); // +/-12 gauss
+	writeMagnetometer (CTRL_REG7_XM, 0b00000000); // Continuous-conversion mode
+	
+	// Enable gyroscope
+	writeGyroscope    (CTRL_REG1_G, 0b00001111); // Normal power mode, all axes enabled
+	writeGyroscope    (CTRL_REG4_G, 0b00110000); // Continuos update, 2000 dps full scale
 
 }
 
