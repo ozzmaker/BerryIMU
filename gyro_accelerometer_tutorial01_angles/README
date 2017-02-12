@@ -1,5 +1,5 @@
 * Developed by Mark Williams
-* Created December 2014 - Updated March 2016
+* Created December 2014 - Updated January2017
 
 This program will enable your Raspberry Pi to read the values from a gyroscope and accelerometer and convert them to usable angles.
 Go here for more information;
