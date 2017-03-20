@@ -3,8 +3,9 @@ BerryIMU - An accelerometer, gyroscope, magnetometer, Barometric Pressure, Tempe
 Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details.
 
 <h1>BerryIMU  V1.5</h1>
-![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd1-300.jpg "" )
-![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd3-300.jpg "")
+
+![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd1-300.jpg "BerryIMU")
+![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd3-300.jpg "BerryIMU")
 
 
 ![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd5-300.jpg?raw=true "BerryIMU and Raspberry Pi")
@@ -22,12 +23,21 @@ Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details
 <h1>Wiring Diagrams</h1>
 
 <h2>Raspberry Pi</h2>
+
 ![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/RaspberryPiBerryIMUWire1.png "Wiring Diagram")
+
 <h2>Arduino</h2>
+
 ![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/07/BerryIMUArduinoWire1.png "Wiring Diagram")
+
 <h2>Adafruit Feather Hazzuh!</h2>
+
 ![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/AdafruitHuzzahBerryIMUWire1.png "Wiring Diagram")
+
 <h2>Sparkfun Thing</h2>
+
 ![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/SparkfunThingDevBerryIMUWire1.png "Wiring Diagram")
+
 <h2>Teensy 3.6</h2>
+
 ![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/Teensy3.6BerryIMUWire1.png "Wiring Diagram")
