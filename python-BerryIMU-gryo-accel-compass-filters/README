@@ -1,12 +1,16 @@
-* Developed by Mark Williams
-* Created Decemeber 2014 - Updated May 2016
 
-This program will enable your Raspberry Pi to read the values from a gyroscope, accelerometer & magnetometer and convert them to usable angles and heading.
-It also includes tilt compensation for compass heading. Utilises both the Complementary and Kalman filters.
-Go here for more information;
+* Developed by Mark Williams
+* Created March 2017
+
+
+This program  reads the angles from the acceleromter, gyrscope
+and mangnetometeron a BerryIMU connected to a Raspberry Pi.
+
+This program includes two filters (low pass and median) to improve the
+values returned from BerryIMU by reducing noise.
+
 
 http://ozzmaker.com/
 
 Run with:
-sudo python berryIMU.py
-
+python berryIMU.py
