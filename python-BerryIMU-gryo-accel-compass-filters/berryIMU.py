@@ -2,7 +2,6 @@
 #
 #	This program  reads the angles from the acceleromter, gyrscope
 #	and mangnetometeron a BerryIMU connected to a Raspberry Pi.
-
 #
 #	This program includes two filters (low pass and mdeian) to improve the 
 #	values returned from BerryIMU by reducing noise.
