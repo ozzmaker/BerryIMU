@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 		roll = -asin(accYnorm/cos(pitch));
 
 		//Calculate the new tilt compensated values
-		magXcomp = magRaw[0]*cos(pitch)+magRaw[02]*sin(pitch);
+		magXcomp = magRaw[0]*cos(pitch)+magRaw[2]*sin(pitch);
 		magYcomp = magRaw[0]*sin(roll)*sin(pitch)+magRaw[1]*cos(roll)-magRaw[2]*sin(roll)*cos(pitch);
 
 
