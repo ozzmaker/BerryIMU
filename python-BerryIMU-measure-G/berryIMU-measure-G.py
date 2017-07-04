@@ -70,9 +70,9 @@ while True:
 	ACCy = readACCy()
 	ACCz = readACCz()
 
-	print("##### X = %f G  #####" % ((ACCx * 0.224)/1000)),
-	print(" Y =   %fG  #####" % ((ACCy * 0.224)/1000)),
-	print(" Z =  %fG  #####" % ((ACCz * 0.224)/1000))
+	print("##### X = %f G  #####" % ((ACCx * 0.244)/1000)),
+	print(" Y =   %fG  #####" % ((ACCy * 0.244)/1000)),
+	print(" Z =  %fG  #####" % ((ACCz * 0.244)/1000))
 
 	
 	
