@@ -1,49 +1,53 @@
-﻿<!--
-    BerryIMU -   Ozzmaker.com
+<!--
+    BerryIMU -   Ozzmaker.com
 -->
-
+ 
 <Page
-    x:Class="BERRYIMU.MainPage"
+    x:Class="BerryImu.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:BERRYIMU"
+    xmlns:local="using:BerryImu"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-
-
+ 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
-
-
-        <TextBlock x:Name="Title" HorizontalAlignment="Center" Margin="0,20,0,0"  Text="BerryIMU - ozzmaker.com"  Height="100" VerticalAlignment="Top" Width="1000" FontSize="62" TextAlignment="Center" FontWeight="SemiBold" />
-        <TextBlock x:Name="DisplayTextGyrX" VerticalAlignment="Top" Margin="300,200,300,0" TextWrapping="Wrap" Text="Gyro X Raw: Not Initialized" HorizontalAlignment="Left" Width="312" FontSize="30" Foreground="Blue" TextAlignment="Center"/>
-        <TextBlock x:Name="DisplayTextGyrY" VerticalAlignment="Top" Margin="300,200,300,0" TextWrapping="Wrap" Text="Gyro Y Raw: Not Initialized" HorizontalAlignment="Center" Width="312" FontSize="30" Foreground="Green" TextAlignment="Center"/>
-        <TextBlock x:Name="DisplayTextGyrZ" VerticalAlignment="Top" Margin="300,200,300,0" TextWrapping="Wrap" Text="Gyro Z Raw: Not Initialized" HorizontalAlignment="Right" Width="312" FontSize="30" Foreground="Red" TextAlignment="Center"/>
-
-        <TextBlock x:Name="DisplayTextAccX" VerticalAlignment="Top" Margin="300,300,300,0" TextWrapping="Wrap" Text="Acc X Raw: Not Initialized" HorizontalAlignment="Left" Width="312" FontSize="30" Foreground="Blue" TextAlignment="Center"/>
-        <TextBlock x:Name="DisplayTextAccY" VerticalAlignment="Top" Margin="300,300,300,0" TextWrapping="Wrap" Text="Acc Y Raw: Not Initialized" HorizontalAlignment="Center" Width="312" FontSize="30" Foreground="Green" TextAlignment="Center"/>
-        <TextBlock x:Name="DisplayTextAccZ" VerticalAlignment="Top" Margin="300,300,300,0" TextWrapping="Wrap" Text="Acc Z Raw: Not Initialized" HorizontalAlignment="Right" Width="312" FontSize="30" Foreground="Red" TextAlignment="Center"/>
-
-        <TextBlock x:Name="DisplayTextAccXAngle" VerticalAlignment="Top" Margin="300,400,300,0" TextWrapping="Wrap" Text="Acc X  Angle: Not Initialized" HorizontalAlignment="Left" Width="312" FontSize="30" Foreground="Blue" TextAlignment="Center"/>
-        <TextBlock x:Name="DisplayTextAccYAngle" VerticalAlignment="Top" Margin="300,400,300,0" TextWrapping="Wrap" Text="Acc Y  Angle: Not Initialized" HorizontalAlignment="Center" Width="312" FontSize="30" Foreground="Green" TextAlignment="Center"/>
-
-        <TextBlock x:Name="DisplayTextGyrAngleX" VerticalAlignment="Top" Margin="300,500,300,0" TextWrapping="Wrap" Text="Acc X Angle: Not Initialized" HorizontalAlignment="Left" Width="312" FontSize="30" Foreground="Blue" TextAlignment="Center"/>
-        <TextBlock x:Name="DisplayTextGyrAngleY" VerticalAlignment="Top" Margin="300,500,300,0" TextWrapping="Wrap" Text="Acc Y Angle: Not Initialized" HorizontalAlignment="Center" Width="312" FontSize="30" Foreground="Green" TextAlignment="Center"/>
-        <TextBlock x:Name="DisplayTextGyrAngleZ" VerticalAlignment="Top" Margin="300,500,300,0" TextWrapping="Wrap" Text="Acc Z Angle: Not Initialized" HorizontalAlignment="Right" Width="312" FontSize="30" Foreground="Red" TextAlignment="Center"/>
-
-        <TextBlock x:Name="DisplayTextFusedX" VerticalAlignment="Top" Margin="200,650,0,0" TextWrapping="Wrap" Text="Fused X Angle: " HorizontalAlignment="Left" Width="335" FontSize="50" Foreground="Black" TextAlignment="Left"/>
-        <TextBlock x:Name="DisplayTextFusedXvalue" VerticalAlignment="Top" Margin="550,650,0,0" TextWrapping="Wrap" HorizontalAlignment="Left" Width="180" FontSize="60" Foreground="Blue"  FontWeight="Bold" TextAlignment="Left"/>
-        <TextBlock x:Name="DisplayTextFusedY" VerticalAlignment="Top" Margin="0,650,450,00" TextWrapping="Wrap" Text="Fused Y Angle:" HorizontalAlignment="Right" Width="335" FontSize="50" Foreground="Black" TextAlignment="Left"/>
-        <TextBlock x:Name="DisplayTextFusedYvalue" VerticalAlignment="Top" Margin="0,650,250,0" TextWrapping="Wrap" HorizontalAlignment="Right" Width="180" FontSize="60" Foreground="Green" FontWeight="Bold" TextAlignment="Left"/>
-
-        <TextBlock x:Name="DisplayTextHeading" VerticalAlignment="Top" Margin="200,800,0,0" TextWrapping="Wrap" Text="Heading: " HorizontalAlignment="Left" Width="400" FontSize="50" Foreground="Black" TextAlignment="Left"/>
-        <TextBlock x:Name="DisplayTextHeadingValue" VerticalAlignment="Top" Margin="550,800,0,0" TextWrapping="Wrap"  HorizontalAlignment="left" Width="180" FontSize="60" Foreground="DarkMagenta" FontWeight="Bold" TextAlignment="Left"/>
-        <TextBlock x:Name="DisplayTextHeadingTiltCompensated" VerticalAlignment="Top" Margin="0,800,400,0" TextWrapping="Wrap" Text="Tilt Compensated Heading:" HorizontalAlignment="Right" Width="400" FontSize="40" Foreground="black" TextAlignment="Left"/>
-        <TextBlock x:Name="DisplayTextHeadingTiltCompensatedValue" VerticalAlignment="Top" Margin="0,800,250,0" TextWrapping="Wrap"  HorizontalAlignment="Right" Width="180" FontSize="60" Foreground="Purple" FontWeight="Bold" TextAlignment="Left"/>
-
-
-
-        <TextBlock x:Name="DisplayText_Status" HorizontalAlignment="Center" Margin="10,360,10,0" TextWrapping="Wrap" Text="Status: Initializing ..." VerticalAlignment="Bottom" Width="1346" FontSize="32" Foreground="#FFBA041A" TextAlignment="Center"/>
+ 
+        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Visible" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True">
+            <RelativePanel BorderBrush="Gray" BorderThickness="1">
+ 
+                <TextBlock x:Name="Title" HorizontalAlignment="Center" Text="BerryIMU - ozzmaker.com"  VerticalAlignment="Top"  TextAlignment="Center" FontWeight="SemiBold" />
+ 
+                <TextBlock x:Name="DisplayTextStatus" TextWrapping="Wrap" Text="Status: Initializing ..." Foreground="#FFBA041A" RelativePanel.Below="Title"/>
+ 
+                <TextBlock x:Name="DisplayTextGyrX" TextWrapping="Wrap" Text="Gyro X Raw: Not Initialized" Foreground="Blue"  RelativePanel.Below="DisplayTextStatus"/>
+                <TextBlock x:Name="DisplayTextGyrY" TextWrapping="Wrap" Text="Gyro Y Raw: Not Initialized" Foreground="Green" RelativePanel.Below="DisplayTextGyrX"/>
+                <TextBlock x:Name="DisplayTextGyrZ" TextWrapping="Wrap" Text="Gyro Z Raw: Not Initialized" Foreground="Red" RelativePanel.Below="DisplayTextGyrY"/>
+ 
+                <TextBlock x:Name="DisplayTextAccX" TextWrapping="Wrap" Text="Acc X Raw: Not Initialized" Foreground="Blue" RelativePanel.Below="DisplayTextGyrZ"/>
+                <TextBlock x:Name="DisplayTextAccY" TextWrapping="Wrap" Text="Acc Y Raw: Not Initialized" Foreground="Green" RelativePanel.Below="DisplayTextAccX"/>
+                <TextBlock x:Name="DisplayTextAccZ" TextWrapping="Wrap" Text="Acc Z Raw: Not Initialized" Foreground="Red" RelativePanel.Below="DisplayTextAccY"/>
+ 
+                <TextBlock x:Name="DisplayTextAccXAngle" TextWrapping="Wrap" Text="Acc X  Angle: Not Initialized" Foreground="Blue" RelativePanel.Below="DisplayTextAccZ"/>
+                <TextBlock x:Name="DisplayTextAccYAngle" TextWrapping="Wrap" Text="Acc Y  Angle: Not Initialized" Foreground="Green" RelativePanel.Below="DisplayTextAccXAngle"/>
+ 
+                <TextBlock x:Name="DisplayTextGyrAngleX" TextWrapping="Wrap" Text="Acc X Angle: Not Initialized" Foreground="Blue" RelativePanel.Below="DisplayTextAccYAngle"/>
+                <TextBlock x:Name="DisplayTextGyrAngleY" TextWrapping="Wrap" Text="Acc Y Angle: Not Initialized" Foreground="Green" RelativePanel.Below="DisplayTextGyrAngleX"/>
+                <TextBlock x:Name="DisplayTextGyrAngleZ" TextWrapping="Wrap" Text="Acc Z Angle: Not Initialized" Foreground="Red" RelativePanel.Below="DisplayTextGyrAngleY"/>
+ 
+                <TextBlock x:Name="DisplayTextFusedX" TextWrapping="Wrap" Text="Fused X Angle: " Foreground="Black" RelativePanel.Below="DisplayTextGyrAngleZ"/>
+                <TextBlock x:Name="DisplayTextFusedXvalue" TextWrapping="Wrap" Foreground="Blue"  FontWeight="Bold" RelativePanel.Below="DisplayTextGyrAngleZ" RelativePanel.RightOf="DisplayTextFusedX"/>
+ 
+                <TextBlock x:Name="DisplayTextFusedY" TextWrapping="Wrap" Text="Fused Y Angle: " RelativePanel.Below="DisplayTextFusedX"/>
+                <TextBlock x:Name="DisplayTextFusedYvalue" TextWrapping="Wrap" Foreground="Green" FontWeight="Bold" RelativePanel.Below="DisplayTextFusedX" RelativePanel.RightOf="DisplayTextFusedY"/>
+ 
+                <TextBlock x:Name="DisplayTextHeading" TextWrapping="Wrap" Text="Heading: " Foreground="Black" RelativePanel.Below="DisplayTextFusedY"/>
+                <TextBlock x:Name="DisplayTextHeadingValue" TextWrapping="Wrap"  Foreground="DarkMagenta" FontWeight="Bold" RelativePanel.Below="DisplayTextFusedY" RelativePanel.RightOf="DisplayTextHeading"/>
+ 
+                <TextBlock x:Name="DisplayTextHeadingTiltCompensated" TextWrapping="Wrap" Text="Tilt Compensated Heading: " Foreground="black" RelativePanel.Below="DisplayTextHeading"/>
+                <TextBlock x:Name="DisplayTextHeadingTiltCompensatedValue" TextWrapping="Wrap"  Foreground="Purple" FontWeight="Bold" RelativePanel.Below="DisplayTextHeading" RelativePanel.RightOf="DisplayTextHeadingTiltCompensated"/>
+ 
+            </RelativePanel>
+        </ScrollViewer>
     </Grid>
 </Page>
