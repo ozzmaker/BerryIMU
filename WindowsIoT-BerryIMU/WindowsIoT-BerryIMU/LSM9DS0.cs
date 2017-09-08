@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BERRYIMU
 {
-    class berrryIMU
+    class LSM9DS0
     {
         //I2C addresses
         public const byte MAG_ADDRESS = 0x1E;
