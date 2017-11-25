@@ -2,7 +2,7 @@ BerryIMU - An accelerometer, gyroscope, magnetometer, Barometric Pressure, Tempe
 
 Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details.
 
-<h1>BerryIMU  V1.5</h1>
+<h1>BerryIMU  </h1>
 
 ![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd1-300.jpg "BerryIMU")
 ![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd3-300.jpg "BerryIMU")
