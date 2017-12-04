@@ -140,7 +140,7 @@ a = datetime.datetime.now()
 
 ################# Compass Calibration values ############
 # Use calibrateBerryIMU.py to get calibration values 
-# Calibrating the compass isn’t mandatory, however a calibrated 
+# Calibrating the compass isnt mandatory, however a calibrated 
 # compass will result in more accurate heading values.
 magXmin =  0
 magYmin =  0
