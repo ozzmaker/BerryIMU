@@ -313,7 +313,7 @@ while True:
     if 1:			#Change to '0' to stop  showing the angles from the gyro
         print ("\033[1;31;40m\tGRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f" % (gyroXangle,gyroYangle,gyroZangle)),
 
-    if 0:			#Change to '0' to stop  showing the angles from the complementary filter
+    if 1:			#Change to '0' to stop  showing the angles from the complementary filter
         print ("\033[1;35;40m   \tCFangleX Angle %5.2f \033[1;36;40m  CFangleY Angle %5.2f \33[1;32;40m" % (CFangleX,CFangleY)),
         
     if 1:			#Change to '0' to stop  showing the heading
