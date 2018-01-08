@@ -1,9 +1,9 @@
 * Developed by Mark Williams
-* Created June  2016
+* Modified by Peter Peck
 
 This program demonstrates how to convert the raw values from an accelerometer to Gs
 
-
+Both the BerryIMUv1 and BerryIMUv2 are supported
 
 http://ozzmaker.com/accelerometer-to-g/
 
