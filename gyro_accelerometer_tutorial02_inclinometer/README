@@ -1,9 +1,10 @@
-* Developed by Mark Williams
-* Created December 2014
 
 This program is used to create an Inclinometer using a Raspberry Pi and an IMU
 
 http://ozzmaker.com/inclinometer-using-raspberry-pi-imu/
+
+
+Both the BerryIMUv1 and BerryIMUv2 are supported
 
 Compile with;
 

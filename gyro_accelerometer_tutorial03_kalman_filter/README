@@ -1,10 +1,11 @@
-* Developed by Mark Williams
-* Created December 2014
 
 This program will enable your Raspberry Pi to read the values from a gyroscope and accelerometer and convert them to usable angles.
 Go here for more information;
 
 http://ozzmaker.com/guide-interfacing-gyro-accelerometer-raspberry-pi-kalman-filter/
+
+
+Both the BerryIMUv1 and BerryIMUv2 are supported
 
 Compile with;
 gcc -o gyro_accelerometer_tutorial03 -l rt gyro_accelerometer_tutorial03.c -lm

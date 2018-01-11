@@ -1,14 +1,14 @@
 #!/usr/bin/python
 #
-#	This program demonstrates how to convert the raw values from an accelerometer to Gs
+#    This program demonstrates how to convert the raw values from an accelerometer to Gs
 #
 #
-#   Both the BerryIMUv1 and BerryIMUv2 are supported
+#    Both the BerryIMUv1 and BerryIMUv2 are supported
 #
-#   Feel free to do whatever you like with this code
-#	Distributed as-is; no warranty is given.
-#	
-#	http://ozzmaker.com/
+#    Feel free to do whatever you like with this code
+#    Distributed as-is; no warranty is given.
+#
+#    http://ozzmaker.com/
 
 
 

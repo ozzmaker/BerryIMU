@@ -1,27 +1,20 @@
+
 /*
-	This program  reads the angles from the accelerometer and gyroscope
-	on a BerryIMU connected to a Raspberry Pi.
-	http://ozzmaker.com/
+    This program  reads the angles from the accelerometer and gyroscope
+    on a BerryIMU connected to a Raspberry Pi.
+
+    A Kalman filter is used.
 
 
-    Copyright (C) 2014  Mark Williams
+    Both the BerryIMUv1 and BerryIMUv2 are supported
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-    Library General Public License for more details.
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-    MA 02111-1307, USA
+    Feel free to do whatever you like with this code
+    Distributed as-is; no warranty is given.
+
+    http://ozzmaker.com/
 */
 
-
-
+#include <sys/time.h>
 #include <unistd.h>
 #include <math.h>
 #include <signal.h>
@@ -30,7 +23,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <time.h>
-#include "sensor.c"
+#include "IMU.c"
 
 
 #define DT 0.02         // [s/loop] loop period. 20ms
@@ -103,8 +96,9 @@ int main(int argc, char *argv[])
 	struct  timeval tvBegin, tvEnd,tvDiff;
 
 
-        signal(SIGINT, INThandler);
+	signal(SIGINT, INThandler);
 
+	detectIMU();
 	enableIMU();
 
 	gettimeofday(&tvBegin, NULL);
@@ -143,22 +137,22 @@ int main(int argc, char *argv[])
 
 
 
-        //Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
-        //Two different pieces of code are used depending on how your IMU is mounted.
-        //If IMU is upside down
+	//Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
+	//Two different pieces of code are used depending on how your IMU is mounted.
+	//If IMU is upside down
 	/*
-        if (AccXangle >180)
-                AccXangle -= (float)360.0;
+	if (AccXangle >180)
+		AccXangle -= (float)360.0;
 
-        AccYangle-=90;
-        if (AccYangle >180)
-                AccYangle -= (float)360.0;
+	AccYangle-=90;
+	if (AccYangle >180)
+		AccYangle -= (float)360.0;
 	*/
 
-        //If IMU is up the correct way, use these lines
-        AccXangle -= (float)180.0;
+	//If IMU is up the correct way, use these lines
+	AccXangle -= (float)180.0;
 	if (AccYangle > 90)
-	        AccYangle -= (float)270;
+		AccYangle -= (float)270;
 	else
 		AccYangle += (float)90;
 
@@ -175,10 +169,10 @@ int main(int argc, char *argv[])
 	printf ("GyroX  %7.3f \t AccXangle \e[m %7.3f \t \033[22;31mCFangleX %7.3f\033[0m\t GyroY  %7.3f \t AccYangle %7.3f \t \033[22;36mCFangleY %7.3f\t\033[0m\n",gyroXangle,AccXangle,CFangleX,gyroYangle,AccYangle,CFangleY);
 
 	//Each loop should be at least 20ms.
-        while(mymillis() - startInt < (DT*1000))
-        {
-            usleep(100);
-        }
+	while(mymillis() - startInt < (DT*1000))
+	{
+		usleep(100);
+	}
 
 	printf("Loop Time %d\t", mymillis()- startInt);
     }
@@ -188,60 +182,58 @@ int main(int argc, char *argv[])
 
 
 
-  float kalmanFilterX(float accAngle, float gyroRate)
-  {
-    float  y, S;
-    float K_0, K_1;
+float kalmanFilterX(float accAngle, float gyroRate){
+	float  y, S;
+	float K_0, K_1;
 
 
-    KFangleX += DT * (gyroRate - x_bias);
+	KFangleX += DT * (gyroRate - x_bias);
 
-    XP_00 +=  - DT * (XP_10 + XP_01) + Q_angle * DT;
-    XP_01 +=  - DT * XP_11;
-    XP_10 +=  - DT * XP_11;
-    XP_11 +=  + Q_gyro * DT;
+	XP_00 +=  - DT * (XP_10 + XP_01) + Q_angle * DT;
+	XP_01 +=  - DT * XP_11;
+	XP_10 +=  - DT * XP_11;
+	XP_11 +=  + Q_gyro * DT;
 
-    y = accAngle - KFangleX;
-    S = XP_00 + R_angle;
-    K_0 = XP_00 / S;
-    K_1 = XP_10 / S;
+	y = accAngle - KFangleX;
+	S = XP_00 + R_angle;
+	K_0 = XP_00 / S;
+	K_1 = XP_10 / S;
 
-    KFangleX +=  K_0 * y;
-    x_bias  +=  K_1 * y;
-    XP_00 -= K_0 * XP_00;
-    XP_01 -= K_0 * XP_01;
-    XP_10 -= K_1 * XP_00;
-    XP_11 -= K_1 * XP_01;
+	KFangleX +=  K_0 * y;
+	x_bias  +=  K_1 * y;
+	XP_00 -= K_0 * XP_00;
+	XP_01 -= K_0 * XP_01;
+	XP_10 -= K_1 * XP_00;
+	XP_11 -= K_1 * XP_01;
 
-    return KFangleX;
-  }
-
-
-  float kalmanFilterY(float accAngle, float gyroRate)
-  {
-    float  y, S;
-    float K_0, K_1;
+	return KFangleX;
+}
 
 
-    KFangleY += DT * (gyroRate - y_bias);
+float kalmanFilterY(float accAngle, float gyroRate){
+	float  y, S;
+	float K_0, K_1;
 
-    YP_00 +=  - DT * (YP_10 + YP_01) + Q_angle * DT;
-    YP_01 +=  - DT * YP_11;
-    YP_10 +=  - DT * YP_11;
-    YP_11 +=  + Q_gyro * DT;
 
-    y = accAngle - KFangleY;
-    S = YP_00 + R_angle;
-    K_0 = YP_00 / S;
-    K_1 = YP_10 / S;
+	KFangleY += DT * (gyroRate - y_bias);
 
-    KFangleY +=  K_0 * y;
-    y_bias  +=  K_1 * y;
-    YP_00 -= K_0 * YP_00;
-    YP_01 -= K_0 * YP_01;
-    YP_10 -= K_1 * YP_00;
-    YP_11 -= K_1 * YP_01;
+	YP_00 +=  - DT * (YP_10 + YP_01) + Q_angle * DT;
+	YP_01 +=  - DT * YP_11;
+	YP_10 +=  - DT * YP_11;
+	YP_11 +=  + Q_gyro * DT;
 
-    return KFangleY;
-  }
+	y = accAngle - KFangleY;
+	S = YP_00 + R_angle;
+	K_0 = YP_00 / S;
+	K_1 = YP_10 / S;
+
+	KFangleY +=  K_0 * y;
+	y_bias  +=  K_1 * y;
+	YP_00 -= K_0 * YP_00;
+	YP_01 -= K_0 * YP_01;
+	YP_10 -= K_1 * YP_00;
+	YP_11 -= K_1 * YP_01;
+
+	return KFangleY;
+}
 

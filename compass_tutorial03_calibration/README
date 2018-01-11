@@ -1,5 +1,10 @@
-* Developed by Mark Williams
-* Created January 2015
+
+This program demonstrates how to calibrate a magnetometer
+on the Raspberry Pi.
+http://ozzmaker.com/compass3
+
+Both the BerryIMUv1 and BerryIMUv2 are supported.
+
 
 
 To compile;

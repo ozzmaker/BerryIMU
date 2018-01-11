@@ -1,13 +1,11 @@
-
-* Developed by Mark Williams
-* Created March 2017
-
-
 This program  reads the angles from the acceleromter, gyrscope
 and mangnetometer on a BerryIMU connected to a Raspberry Pi.
 
+
 This program includes two filters (low pass and median) to improve the
 values returned from BerryIMU by reducing noise.
+
+Both the BerryIMUv1 and BerryIMUv2 are supported
 
 
 http://ozzmaker.com/

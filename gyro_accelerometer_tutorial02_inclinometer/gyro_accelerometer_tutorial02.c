@@ -5,22 +5,14 @@
 
 	http://ozzmaker.com/2014/12/12/inclinometer-using-raspberry-pi-imu/
 
-    Copyright (C) 2014  Mark Williams
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-    Library General Public License for more details.
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-    MA 02111-1307, USA
+    Both the BerryIMUv1 and BerryIMUv2 are supported
+
+    Feel free to do whatever you like with this code
+    Distributed as-is; no warranty is given.
+
+    http://ozzmaker.com/
 */
-
 
 #include "SDL.h"
 #include "SDL/SDL_image.h"
@@ -32,7 +24,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <time.h>
-#include "sensor.c"
+#include "IMU.c"
 
 
 #define DT 0.2         	// [s/loop] loop period.  0.2  = 200ms
@@ -46,27 +38,27 @@
 
 int graphics(float carRoll, float carPitch);
 int startSDL();
-        SDL_Surface* screen = NULL;
-        SDL_Surface* inclinometerJeepFront = NULL;
-        SDL_Surface* inclinometerJeepSide = NULL;
-        SDL_Surface* inclinometerOverlay = NULL;
-        SDL_Surface* compatibleInclinometerJeepFront = NULL;
-        SDL_Surface* compatibleInclinometerJeepSide = NULL;
-        SDL_Surface* compatibleInclinometerOverlay = NULL;
-        SDL_Surface* rotationInclinometerJeepFront = NULL;
-        SDL_Surface* rotationInclinometerJeepSide = NULL;
-	SDL_Rect inclinometerJeepOverlayPosition;
-        SDL_Rect inclinometerJeepFrontPosition;
-        SDL_Rect inclinometerJeepSidePosition;
+SDL_Surface* screen = NULL;
+SDL_Surface* inclinometerJeepFront = NULL;
+SDL_Surface* inclinometerJeepSide = NULL;
+SDL_Surface* inclinometerOverlay = NULL;
+SDL_Surface* compatibleInclinometerJeepFront = NULL;
+SDL_Surface* compatibleInclinometerJeepSide = NULL;
+SDL_Surface* compatibleInclinometerOverlay = NULL;
+SDL_Surface* rotationInclinometerJeepFront = NULL;
+SDL_Surface* rotationInclinometerJeepSide = NULL;
+SDL_Rect inclinometerJeepOverlayPosition;
+SDL_Rect inclinometerJeepFrontPosition;
+SDL_Rect inclinometerJeepSidePosition;
 
-	SDL_VideoInfo* videoInfo;
+SDL_VideoInfo* videoInfo;
 
 void  INThandler(int sig)
 {
-        SDL_FreeSurface(screen);
-        SDL_Quit();
-        signal(sig, SIG_IGN);
-        exit(0);
+	SDL_FreeSurface(screen);
+	SDL_Quit();
+	signal(sig, SIG_IGN);
+	exit(0);
 }
 
 int mymillis()
@@ -78,10 +70,10 @@ int mymillis()
 
 int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval *t1)
 {
-    long int diff = (t2->tv_usec + 1000000 * t2->tv_sec) - (t1->tv_usec + 1000000 * t1->tv_sec);
-    result->tv_sec = diff / 1000000;
-    result->tv_usec = diff % 1000000;
-    return (diff<0);
+	long int diff = (t2->tv_usec + 1000000 * t2->tv_sec) - (t1->tv_usec + 1000000 * t1->tv_sec);
+	result->tv_sec = diff / 1000000;
+	result->tv_usec = diff % 1000000;
+	return (diff<0);
 }
 
 int main(int argc, char *argv[])
@@ -109,19 +101,19 @@ int main(int argc, char *argv[])
 	struct  timeval tvBegin, tvEnd,tvDiff;
 
 
-        signal(SIGINT, INThandler);
+	signal(SIGINT, INThandler);
 
+	detectIMU();
 	enableIMU();
 
 	gettimeofday(&tvBegin, NULL);
 
-        if(argc <=1)
-                startSDL();
-        else if (strcmp(argv[1],"nosdl")!= 0)
-                startSDL();
+	if(argc <=1)
+		startSDL();
+	else if (strcmp(argv[1],"nosdl")!= 0)
+		startSDL();
 
-	while(1)
-	{
+	while(1){
 	startInt = mymillis();
 
 
@@ -150,24 +142,24 @@ int main(int argc, char *argv[])
 
 
 
-        //Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
-        //Two different pieces of code are used depending on how your IMU is mounted.
-        //If IMU is upside down
-        /*
-        if (AccXangle >180)
-                AccXangle -= (float)360.0;
+	//Change the rotation value of the accelerometer to -/+ 180 and move the Y axis '0' point to up.
+	//Two different pieces of code are used depending on how your IMU is mounted.
+	//If IMU is upside down
+	/*
+	if (AccXangle >180)
+		AccXangle -= (float)360.0;
 
-        AccYangle-=90;
-        if (AccYangle >180)
-                AccYangle -= (float)360.0;
-        */
+	AccYangle-=90;
+	if (AccYangle >180)
+	A	ccYangle -= (float)360.0;
+	*/
 
-        //If IMU is up the correct way, use these lines
-        AccXangle -= (float)180.0;
-        if (AccYangle > 90)
-                AccYangle -= (float)270;
-        else
-                AccYangle += (float)90;
+	//If IMU is up the correct way, use these lines
+	AccXangle -= (float)180.0;
+	if (AccYangle > 90)
+		AccYangle -= (float)270;
+	else
+		AccYangle += (float)90;
 
 
 
@@ -180,17 +172,16 @@ int main(int argc, char *argv[])
 	printf ("   GyroX  %7.3f \t AccXangle \e[m %7.3f \t \033[22;31mCFangleX %7.3f\033[0m\t GyroY  %7.3f \t AccYangle %7.3f \t \033[22;36mCFangleY %7.3f\t\033[0m\n",gyroXangle,AccXangle,CFangleX,gyroYangle,AccYangle,CFangleY);
 
 
-        if(argc <=1)
-                graphics(CFangleX,CFangleY);
-        else if (strcmp(argv[1],"nosdl")!= 0)
-                graphics(CFangleX,CFangleY);
+	if(argc <=1)
+		graphics(CFangleX,CFangleY);
+	else if (strcmp(argv[1],"nosdl")!= 0)
+		graphics(CFangleX,CFangleY);
 
 
 	//Each loop should be at least 20ms.
-        while(mymillis() - startInt < (DT*1000))
-        {
-            usleep(100);
-        }
+	while(mymillis() - startInt < (DT*1000)){
+		usleep(100);
+	}
 
 	printf("Loop Time %d\t", mymillis()- startInt);
     }
@@ -199,55 +190,55 @@ int main(int argc, char *argv[])
 int startSDL()
 {
 	//fb1 = small TFT.   fb0 = HDMI/RCA output
-        putenv("SDL_FBDEV=/dev/fb0");
+	putenv("SDL_FBDEV=/dev/fb0");
 
 
 	//Initialize  SDL and disable mouse
-        SDL_Init(SDL_INIT_VIDEO);
-        SDL_ShowCursor(SDL_DISABLE);
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_ShowCursor(SDL_DISABLE);
 
 	//Get information about the current video device.  E.g. resolution and bits per pixal
-        videoInfo = SDL_GetVideoInfo ();
+	videoInfo = SDL_GetVideoInfo ();
 
 	//Setup a Video mode.
-        screen = SDL_SetVideoMode(videoInfo->current_w, videoInfo->current_h, videoInfo->vfmt->BitsPerPixel, SDL_SWSURFACE );
-        if ( screen == NULL ) {
-                fprintf(stderr, "Unable to setvideo: %s\n", SDL_GetError());
-                exit(1);
-        }
+	screen = SDL_SetVideoMode(videoInfo->current_w, videoInfo->current_h, videoInfo->vfmt->BitsPerPixel, SDL_SWSURFACE );
+	if ( screen == NULL ) {
+		fprintf(stderr, "Unable to setvideo: %s\n", SDL_GetError());
+		exit(1);
+	}
 
 	//Load image.
 	inclinometerJeepFront =  IMG_Load("inclinometerJeepFront.png");
-        if (inclinometerJeepFront == NULL){
-        printf("error loading JeepFront image\n");
-                        SDL_Quit();
-                        exit(1);
-                }
+	if (inclinometerJeepFront == NULL){
+		printf("error loading JeepFront image\n");
+		SDL_Quit();
+		exit(1);
+	}
 	//Convert the image to a format we can use.
 	compatibleInclinometerJeepFront = SDL_DisplayFormatAlpha(inclinometerJeepFront);
 
 	//Load image.
 	inclinometerJeepSide =  IMG_Load("inclinometerJeepSide.png");
-                if (inclinometerJeepSide == NULL){
-                         printf("error loading JeepSide image\n");
-                        SDL_Quit();
-                        exit(1);
-                }
+	if (inclinometerJeepSide == NULL){
+		 printf("error loading JeepSide image\n");
+		SDL_Quit();
+		exit(1);
+	}
 	//Convert the image to a format we can use.
-        compatibleInclinometerJeepSide = SDL_DisplayFormatAlpha(inclinometerJeepSide);
+	compatibleInclinometerJeepSide = SDL_DisplayFormatAlpha(inclinometerJeepSide);
 
 	//Load image.
-        inclinometerOverlay =  IMG_Load("inclinometerOverlay.png");
-                if (inclinometerOverlay == NULL){
-                         printf("error loading Overlay image\n");
-                        SDL_Quit();
-                        exit(1);
-                }
+	inclinometerOverlay =  IMG_Load("inclinometerOverlay.png");
+	if (inclinometerOverlay == NULL){
+		 printf("error loading Overlay image\n");
+		SDL_Quit();
+		exit(1);
+	}
 	//Convert the image to a format we can use.
-        compatibleInclinometerOverlay = SDL_DisplayFormatAlpha(inclinometerOverlay);
+	compatibleInclinometerOverlay = SDL_DisplayFormatAlpha(inclinometerOverlay);
 
 	//Position the overlay in the middle of the screen.   screen heigth minus the height of the overlay image.
-        inclinometerJeepOverlayPosition.y = (videoInfo->current_h/2)-(compatibleInclinometerOverlay->h/2);
+	inclinometerJeepOverlayPosition.y = (videoInfo->current_h/2)-(compatibleInclinometerOverlay->h/2);
 
 
 }
@@ -260,29 +251,29 @@ int graphics(float carRoll, float carPitch)
 {
 
 	//Set all pixels to black to clear the last image.
-        SDL_FillRect(screen,NULL,0x000000);
+	SDL_FillRect(screen,NULL,0x000000);
 
 	//Position of both jeep images.
-        inclinometerJeepFrontPosition.x = 30;
-        inclinometerJeepFrontPosition.y = (videoInfo->current_h/2)-(compatibleInclinometerJeepFront->h/2);
-        inclinometerJeepSidePosition.x = 262;
-        inclinometerJeepSidePosition.y = (videoInfo->current_h/2)-(compatibleInclinometerJeepFront->h/2);
+	inclinometerJeepFrontPosition.x = 30;
+	inclinometerJeepFrontPosition.y = (videoInfo->current_h/2)-(compatibleInclinometerJeepFront->h/2);
+	inclinometerJeepSidePosition.x = 262;
+	inclinometerJeepSidePosition.y = (videoInfo->current_h/2)-(compatibleInclinometerJeepFront->h/2);
 
 
 	//Rotate the images based on pitch and roll.
-        rotationInclinometerJeepSide = rotozoomSurface(compatibleInclinometerJeepSide, carPitch, 1.0, 0.0);
-        rotationInclinometerJeepFront = rotozoomSurface(compatibleInclinometerJeepFront, carRoll, 1.0, 0.0);
+	rotationInclinometerJeepSide = rotozoomSurface(compatibleInclinometerJeepSide, carPitch, 1.0, 0.0);
+	rotationInclinometerJeepFront = rotozoomSurface(compatibleInclinometerJeepFront, carRoll, 1.0, 0.0);
 
 	//Recenter pivot point.
 	inclinometerJeepFrontPosition.x -= rotationInclinometerJeepFront->w/2-compatibleInclinometerJeepFront->w/2;
-        inclinometerJeepFrontPosition.y -= rotationInclinometerJeepFront->h/2-compatibleInclinometerJeepFront->h/2;
-        inclinometerJeepSidePosition.x -= rotationInclinometerJeepSide->w/2-compatibleInclinometerJeepSide->w/2;
-        inclinometerJeepSidePosition.y -= rotationInclinometerJeepSide->h/2-compatibleInclinometerJeepSide->h/2;
+	inclinometerJeepFrontPosition.y -= rotationInclinometerJeepFront->h/2-compatibleInclinometerJeepFront->h/2;
+	inclinometerJeepSidePosition.x -= rotationInclinometerJeepSide->w/2-compatibleInclinometerJeepSide->w/2;
+	inclinometerJeepSidePosition.y -= rotationInclinometerJeepSide->h/2-compatibleInclinometerJeepSide->h/2;
 
 	//Blit the three images to the surface.
 	SDL_BlitSurface( compatibleInclinometerOverlay, NULL, screen, &inclinometerJeepOverlayPosition);
-        SDL_BlitSurface( rotationInclinometerJeepFront, NULL, screen, &inclinometerJeepFrontPosition);
-        SDL_BlitSurface( rotationInclinometerJeepSide, NULL, screen, &inclinometerJeepSidePosition);
+	SDL_BlitSurface( rotationInclinometerJeepFront, NULL, screen, &inclinometerJeepFrontPosition);
+	SDL_BlitSurface( rotationInclinometerJeepSide, NULL, screen, &inclinometerJeepSidePosition);
 
 
 
@@ -290,9 +281,9 @@ int graphics(float carRoll, float carPitch)
 	SDL_Flip(screen);
 
 	//Free surfaces.
-        SDL_FreeSurface(screen);
-        SDL_FreeSurface(rotationInclinometerJeepFront);
-        SDL_FreeSurface(rotationInclinometerJeepSide);
-        return 0;
+	SDL_FreeSurface(screen);
+	SDL_FreeSurface(rotationInclinometerJeepFront);
+	SDL_FreeSurface(rotationInclinometerJeepSide);
+	return 0;
 
 }

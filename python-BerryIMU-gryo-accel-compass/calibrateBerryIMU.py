@@ -1,8 +1,8 @@
 #!/usr/bin/python
-#	This program is used to calibrate the compass on a BerryIMUv1 or
+#   This program is used to calibrate the compass on a BerryIMUv1 or
 #   BerryIMUv2.
 #
-#	Start this program and rotate your BerryIMU in all directions. 
+#   Start this program and rotate your BerryIMU in all directions. 
 #   You will see the maximum and minimum values change. 
 #   After about 30secs or when the values are not changing, press Ctrl-C.
 #   The program will printout some text which you then need to add to
@@ -52,7 +52,7 @@ magZmax = -32767
 while True:
 
  
-    #print ("LSM9DS0 = %i   " % LSM9DS0),
+    
     #Read magnetometer values
     MAGx = IMU.readMAGx()
     MAGy = IMU.readMAGy()

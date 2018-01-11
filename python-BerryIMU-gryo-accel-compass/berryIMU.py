@@ -141,15 +141,14 @@ a = datetime.datetime.now()
 ################# Compass Calibration values ############
 # Use calibrateBerryIMU.py to get calibration values 
 # Calibrating the compass isnt mandatory, however a calibrated 
-# compass will result in more accurate heading values.
+# compass will result in a more accurate heading values.
 magXmin =  0
 magYmin =  0
 magZmin =  0
 magXmax =  0
 magYmax =  0
 magZmax =  0
-      
-      
+
 '''
 Here is an example:
 magXmin =  -1748
@@ -164,7 +163,7 @@ Dont use the above values, these are just an example.
     
 while True:
 
-    
+
     #Read the accelerometer,gyroscope and magnetometer values
     ACCx = IMU.readACCx()
     ACCy = IMU.readACCy()
@@ -175,8 +174,8 @@ while True:
     MAGx = IMU.readMAGx()
     MAGy = IMU.readMAGy()
     MAGz = IMU.readMAGz()
-    
-   
+
+
     #Apply compass calibration    
     MAGx -= (magXmin + magXmax) /2 
     MAGy -= (magYmin + magYmax) /2 
@@ -195,17 +194,11 @@ while True:
     rate_gyr_y =  GYRy * G_GAIN
     rate_gyr_z =  GYRz * G_GAIN
 
-    
+
     #Calculate the angles from the gyro. 
     gyroXangle+=rate_gyr_x*LP
     gyroYangle+=rate_gyr_y*LP
     gyroZangle+=rate_gyr_z*LP
-    
-    
-    
-        
-        
-
 
     ##Convert Accelerometer values to degrees
     AccXangle =  (math.atan2(ACCy,ACCz)+M_PI)*RAD_TO_DEG
@@ -317,7 +310,7 @@ while True:
         print ("\033[1;35;40m   \tCFangleX Angle %5.2f \033[1;36;40m  CFangleY Angle %5.2f \33[1;32;40m" % (CFangleX,CFangleY)),
         
     if 1:			#Change to '0' to stop  showing the heading
-        print ("HEADING  %5.2f \33[1;37;40m tiltCompensatedHeading %5.2f" % (heading,tiltCompensatedHeading)),
+        print ("HEADING %5.2f \33[1;37;40m tiltCompensatedHeading %5.2f" % (heading,tiltCompensatedHeading)),
         
     if 1:			#Change to '0' to stop  showing the angles from the Kalman filter
         print ("\033[1;31;40m kalmanX %5.2f  \033[1;35;40m kalmanY %5.2f  " % (kalmanX,kalmanY)),
