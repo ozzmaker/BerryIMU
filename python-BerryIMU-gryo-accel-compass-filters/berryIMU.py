@@ -242,7 +242,7 @@ while True:
 		mag_medianTable1Y[x] = mag_medianTable1Y[x-1]
 		mag_medianTable1Z[x] = mag_medianTable1Z[x-1]
 
-	# Insert the lates values	
+	# Insert the latest values	
 	mag_medianTable1X[0] = MAGx
 	mag_medianTable1Y[0] = MAGy
 	mag_medianTable1Z[0] = MAGz	
