@@ -51,8 +51,6 @@ magZmax = -32767
     
 while True:
 
- 
-    
     #Read magnetometer values
     MAGx = IMU.readMAGx()
     MAGy = IMU.readMAGy()

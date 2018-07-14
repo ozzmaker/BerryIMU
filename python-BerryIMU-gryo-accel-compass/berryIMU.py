@@ -3,7 +3,10 @@
 #	This program  reads the angles from the acceleromter, gyrscope
 #	and mangnetometeron a BerryIMU connected to a Raspberry Pi.
 #
-#   Both the BerryIMUv1 and BerryIMUv2 are supported
+#	Both the BerryIMUv1 and BerryIMUv2 are supported
+#
+#	BerryIMUv1 uses LSM9DS0 IMU
+#	BerryIMUv2 uses LSM9DS1 IMU
 #
 #	This program includes a number of calculations to improve the 
 #	values returned from BerryIMU. If this is new to you, it 
@@ -13,20 +16,46 @@
 #
 #	http://ozzmaker.com/
 
-
-
 import time
 import math
 import IMU
 import datetime
 import os
 
-
+# If the IMU is upside down (Skull logo facing up), change this value to 1
+IMU_UPSIDE_DOWN = 0
 
 RAD_TO_DEG = 57.29578
 M_PI = 3.14159265358979323846
 G_GAIN = 0.070  # [deg/s/LSB]  If you change the dps for gyro, you need to update this value accordingly
 AA =  0.40      # Complementary filter constant
+
+
+################# Compass Calibration values ############
+# Use calibrateBerryIMU.py to get calibration values 
+# Calibrating the compass isnt mandatory, however a calibrated 
+# compass will result in a more accurate heading value.
+
+magXmin =  0
+magYmin =  0
+magZmin =  0
+magXmax =  0
+magYmax =  0
+magZmax =  0
+
+
+'''
+Here is an example:
+magXmin =  -1748
+magYmin =  -1025
+magZmin =  -1876
+magXmax =  959
+magYmax =  1651
+magZmax =  708
+Dont use the above values, these are just an example.
+'''
+
+
 
 #Kalman filter variables
 Q_angle = 0.02
@@ -120,12 +149,8 @@ def kalmanFilterX ( accAngle, gyroRate, DT):
 	return KFangleX
 
 
-
-
 IMU.detectIMU()     #Detect if BerryIMUv1 or BerryIMUv2 is connected.
 IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
-
-
 
 gyroXangle = 0.0
 gyroYangle = 0.0
@@ -137,30 +162,6 @@ kalmanY = 0.0
 
 a = datetime.datetime.now()
 
-
-################# Compass Calibration values ############
-# Use calibrateBerryIMU.py to get calibration values 
-# Calibrating the compass isnt mandatory, however a calibrated 
-# compass will result in a more accurate heading values.
-magXmin =  0
-magYmin =  0
-magZmin =  0
-magXmax =  0
-magYmax =  0
-magZmax =  0
-
-'''
-Here is an example:
-magXmin =  -1748
-magYmin =  -1025
-magZmin =  -1876
-magXmax =  959
-magYmax =  1651
-magZmax =  708
-Dont use the above values, these are just an example.
-'''   
-      
-    
 while True:
 
 
@@ -174,19 +175,19 @@ while True:
     MAGx = IMU.readMAGx()
     MAGy = IMU.readMAGy()
     MAGz = IMU.readMAGz()
-
+    
 
     #Apply compass calibration    
     MAGx -= (magXmin + magXmax) /2 
     MAGy -= (magYmin + magYmax) /2 
     MAGz -= (magZmin + magZmax) /2 
  
-
+    
     ##Calculate loop Period(LP). How long between Gyro Reads
     b = datetime.datetime.now() - a
     a = datetime.datetime.now()
     LP = b.microseconds/(1000000*1.0)
-    print "Loop Time | %5.2f|" % ( LP ),
+    print "Loop Time %5.2f " % ( LP ),
 
 
     #Convert Gyro raw to degrees per second
@@ -200,35 +201,26 @@ while True:
     gyroYangle+=rate_gyr_y*LP
     gyroZangle+=rate_gyr_z*LP
 
-    ##Convert Accelerometer values to degrees
-    AccXangle =  (math.atan2(ACCy,ACCz)+M_PI)*RAD_TO_DEG
-    AccYangle =  (math.atan2(ACCz,ACCx)+M_PI)*RAD_TO_DEG
+    #Convert Accelerometer values to degrees
+
+    if not IMU_UPSIDE_DOWN:
+        # If the IMU is up the correct way (Skull logo facing down), use these calculations
+        AccXangle =  (math.atan2(ACCy,ACCz)*RAD_TO_DEG)
+        AccYangle =  (math.atan2(ACCz,ACCx)+M_PI)*RAD_TO_DEG
+    else:
+        #Us these four lines when the IMU is upside down. Skull logo is facing up
+        AccXangle =  (math.atan2(-ACCy,-ACCz)*RAD_TO_DEG)
+        AccYangle =  (math.atan2(-ACCz,-ACCx)+M_PI)*RAD_TO_DEG
 
 
-    ####################################################################
-    ######################Correct rotation value########################
-    ####################################################################
+
     #Change the rotation value of the accelerometer to -/+ 180 and
-    #move the Y axis '0' point to up.
-    #
-    #Two different pieces of code are used depending on how your IMU is mounted.
-    #If IMU is up the correct way, Skull logo is facing down, Use these lines
-    AccXangle -= 180.0
+    #move the Y axis '0' point to up.  This makes it easier to read.
     if AccYangle > 90:
         AccYangle -= 270.0
     else:
         AccYangle += 90.0
-    #
-    #
-    #
-    #
-    #If IMU is upside down E.g Skull logo is facing up;
-    #if AccXangle >180:
-        #        AccXangle -= 360.0
-    #AccYangle-=90
-    #if (AccYangle >180):
-        #        AccYangle -= 360.0
-    ############################ END ##################################
+
 
 
     #Complementary filter used to combine the accelerometer and gyro values.
@@ -239,17 +231,8 @@ while True:
     kalmanY = kalmanFilterY(AccYangle, rate_gyr_y,LP)
     kalmanX = kalmanFilterX(AccXangle, rate_gyr_x,LP)
 
-
-    ####################################################################
-    ############################MAG direction ##########################
-    ####################################################################
-    #If IMU is upside down, then use this line.  It isnt needed if the
-    # IMU is the correct way up
-    #MAGy = -MAGy
-    #
-    ############################ END ##################################
-
-
+    if IMU_UPSIDE_DOWN:
+        MAGy = -MAGy      #If IMU is upside down, this is needed to get correct heading.
     #Calculate heading
     heading = 180 * math.atan2(MAGy,MAGx)/M_PI
 
@@ -263,20 +246,21 @@ while True:
     ###################Tilt compensated heading#########################
     ####################################################################
     #Normalize accelerometer raw values.
-    accXnorm = ACCx/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
-    accYnorm = ACCy/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
-   
+    if not IMU_UPSIDE_DOWN:        
+        #Use these two lines when the IMU is up the right way. Skull logo is facing down
+        accXnorm = ACCx/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
+        accYnorm = ACCy/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
+    else:
+        #Us these four lines when the IMU is upside down. Skull logo is facing up
+        accXnorm = -ACCx/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
+        accYnorm = ACCy/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
+
     #Calculate pitch and roll
-    #Use these two lines when the IMU is up the right way. Skull logo is facing down
+
     pitch = math.asin(accXnorm)
     roll = -math.asin(accYnorm/math.cos(pitch))
 
-    #Us these four lines when the IMU is upside down. Skull logo is facing up
-    #accXnorm = -accXnorm				#flip Xnorm as the IMU is upside down
-    #accYnorm = -accYnorm				#flip Ynorm as the IMU is upside down
-    #pitch = math.asin(accXnorm)
-    #roll = math.asin(accYnorm/math.cos(pitch))
-    #
+
     #Calculate the new tilt compensated values
     magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
  
@@ -287,6 +271,9 @@ while True:
     else:
         magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)   #LSM9DS1
 
+
+
+
 	#Calculate tilt compensated heading
     tiltCompensatedHeading = 180 * math.atan2(magYcomp,magXcomp)/M_PI
 
@@ -296,24 +283,20 @@ while True:
     ############################ END ##################################
 
 
-
-
-
-
     if 1:			#Change to '0' to stop showing the angles from the accelerometer
-        print ("\033[1;34;40mACCX Angle %5.2f ACCY Angle %5.2f  \033[0m  " % (AccXangle, AccYangle)),
+        print ("# ACCX Angle %5.2f ACCY Angle %5.2f #  " % (AccXangle, AccYangle)),
 
     if 1:			#Change to '0' to stop  showing the angles from the gyro
-        print ("\033[1;31;40m\tGRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f" % (gyroXangle,gyroYangle,gyroZangle)),
+        print ("\t# GRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f # " % (gyroXangle,gyroYangle,gyroZangle)),
 
     if 1:			#Change to '0' to stop  showing the angles from the complementary filter
-        print ("\033[1;35;40m   \tCFangleX Angle %5.2f \033[1;36;40m  CFangleY Angle %5.2f \33[1;32;40m" % (CFangleX,CFangleY)),
+        print ("\t# CFangleX Angle %5.2f   CFangleY Angle %5.2f #" % (CFangleX,CFangleY)),
         
     if 1:			#Change to '0' to stop  showing the heading
-        print ("HEADING %5.2f \33[1;37;40m tiltCompensatedHeading %5.2f" % (heading,tiltCompensatedHeading)),
+        print ("\t# HEADING %5.2f  tiltCompensatedHeading %5.2f #" % (heading,tiltCompensatedHeading)),
         
     if 1:			#Change to '0' to stop  showing the angles from the Kalman filter
-        print ("\033[1;31;40m kalmanX %5.2f  \033[1;35;40m kalmanY %5.2f  " % (kalmanX,kalmanY)),
+        print ("# kalmanX %5.2f   kalmanY %5.2f #" % (kalmanX,kalmanY)),
 
     #print a new line
     print ""  

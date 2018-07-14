@@ -25,6 +25,33 @@ M_PI = 3.14159265358979323846
 G_GAIN = 0.070  # [deg/s/LSB]  If you change the dps for gyro, you need to update this value accordingly
 AA =  0.40      # Complementary filter constant
 
+################# Compass Calibration values ############
+# Use calibrateBerryIMU.py to get calibration values 
+# Calibrating the compass isnt mandatory, however a calibrated 
+# compass will result in a more accurate heading values.
+
+magXmin =  0
+magYmin =  0
+magZmin =  0
+magXmax =  0
+magYmax =  0
+magZmax =  0
+
+
+'''
+Here is an example:
+magXmin =  -1748
+magYmin =  -1025
+magZmin =  -1876
+magXmax =  959
+magYmax =  1651
+magZmax =  708
+Dont use the above values, these are just an example.
+'''
+
+
+
+
 gyroXangle = 0.0
 gyroYangle = 0.0
 gyroZangle = 0.0
@@ -39,9 +66,12 @@ IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
 
 a = datetime.datetime.now()
 
+
+
+
 while True:
-	
-	
+
+
     #Read the accelerometer,gyroscope and magnetometer values
     ACCx = IMU.readACCx()
     ACCy = IMU.readACCy()
@@ -53,6 +83,11 @@ while True:
     MAGy = IMU.readMAGy()
     MAGz = IMU.readMAGz()
 
+
+    #Apply compass calibration    
+    MAGx -= (magXmin + magXmax) /2 
+    MAGy -= (magYmin + magYmax) /2 
+    MAGz -= (magZmin + magZmax) /2 
 
     ##Calculate loop Period(LP). How long between Gyro Reads
     b = datetime.datetime.now() - a
@@ -74,12 +109,10 @@ while True:
 
 
     #Convert Accelerometer values to degrees
-    AccXangle =  (math.atan2(ACCy,ACCz)+M_PI)*RAD_TO_DEG
+    AccXangle =  (math.atan2(ACCy,ACCz)*RAD_TO_DEG)
     AccYangle =  (math.atan2(ACCz,ACCx)+M_PI)*RAD_TO_DEG
 
-
     #convert the values to -180 and +180
-    AccXangle -= 180.0
     if AccYangle > 90:
         AccYangle -= 270.0
     else:
@@ -111,9 +144,22 @@ while True:
     roll = -math.asin(accYnorm/math.cos(pitch))
 
 
+
+
+
+
     #Calculate the new tilt compensated values
     magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
-    magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)
+    
+     
+    #The compass and accelerometer are orientated differently on the LSM9DS0 and LSM9DS1 and the Z axis on the compass
+    #is also reversed. This needs to be taken into consideration when performing the calculations
+    if(IMU.LSM9DS0):
+        magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)   #LSM9DS0
+    else:
+        magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)   #LSM9DS1
+
+
 
     #Calculate tilt compensated heading
     tiltCompensatedHeading = 180 * math.atan2(magYcomp,magXcomp)/M_PI
@@ -124,18 +170,19 @@ while True:
 
 
     if 1:			#Change to '0' to stop showing the angles from the accelerometer
-        print ("\033[1;34;40mACCX Angle %5.2f ACCY Angle %5.2f  \033[0m  " % (AccXangle, AccYangle)),
+        print ("# ACCX Angle %5.2f ACCY Angle %5.2f #  " % (AccXangle, AccYangle)),
 
     if 1:			#Change to '0' to stop  showing the angles from the gyro
-        print ("\033[1;31;40m\tGRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f" % (gyroXangle,gyroYangle,gyroZangle)),
+        print ("\t# GRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f # " % (gyroXangle,gyroYangle,gyroZangle)),
 
     if 1:			#Change to '0' to stop  showing the angles from the complementary filter
-        print ("\033[1;35;40m   \tCFangleX Angle %5.2f \033[1;36;40m  CFangleY Angle %5.2f \33[1;32;40m" % (CFangleX,CFangleY)),
+        print ("\t# CFangleX Angle %5.2f   CFangleY Angle %5.2f #" % (CFangleX,CFangleY)),
         
     if 1:			#Change to '0' to stop  showing the heading
-        print ("HEADING  %5.2f \33[1;37;40m tiltCompensatedHeading %5.2f" % (heading,tiltCompensatedHeading))
-        
+        print ("\t# HEADING %5.2f  tiltCompensatedHeading %5.2f #" % (heading,tiltCompensatedHeading)),
 
+    #print a new line
+    print ""  
 
 
 

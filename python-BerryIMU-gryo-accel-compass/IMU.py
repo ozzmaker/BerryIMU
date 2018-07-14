@@ -284,7 +284,7 @@ def readGYRz():
 def initIMU():
 
     if (LSM9DS0):   #For BerryIMUv1
-        
+
         #initialise the accelerometer
         writeACC(LSM9DS0_CTRL_REG1_XM, 0b01100111)  #z,y,x axis enabled, continuos update,  100Hz data rate
         writeACC(LSM9DS0_CTRL_REG2_XM, 0b00100000)  #+/- 16G full scale
@@ -297,12 +297,12 @@ def initIMU():
         #initialise the gyroscope
         writeGRY(LSM9DS0_CTRL_REG1_G, 0b00001111)   #Normal power mode, all axes enabled
         writeGRY(LSM9DS0_CTRL_REG4_G, 0b00110000)   #Continuos update, 2000 dps full scale
-    
+
     else:       #For BerryIMUv2
         #initialise the gyroscope
         writeGRY(LSM9DS1_CTRL_REG4,0b00111000)      #z, y, x axis enabled for gyro
         writeGRY(LSM9DS1_CTRL_REG1_G,0b10111000)    #Gyro ODR = 476Hz, 2000 dps
-        writeGRY(LSM9DS1_ORIENT_CFG_G,0b10111000)   #Swap orientation 
+        writeGRY(LSM9DS1_ORIENT_CFG_G,0b00111000)   #Swap orientation 
 
         #initialise the accelerometer
         writeACC(LSM9DS1_CTRL_REG5_XL,0b00111000)   #z, y, x axis enabled for accelerometer

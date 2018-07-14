@@ -1,5 +1,5 @@
 * Developed by Mark Williams / OzzMaker
-* Created Decemeber 2014 - Updated December 2017
+* Created Decemeber 2014 - Updated July 2018
 
 This program will enable your Raspberry Pi to read the values from a gyroscope, accelerometer & magnetometer and convert them to usable angles and heading.
 It also includes tilt compensation for compass heading. Utilises both the Complementary and Kalman filters.
@@ -9,6 +9,8 @@ http://ozzmaker.com/
 
 Both the BerryIMUv1 and BerryIMUv2 are supported
 
+BerryIMUv1 uses LSM9DS0 IMU
+BerryIMUv2 uses LSM9DS1 IMU
 
 
 Run using;
