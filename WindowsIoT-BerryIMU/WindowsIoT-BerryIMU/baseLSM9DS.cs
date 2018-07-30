@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.I2c;
 
@@ -28,7 +25,7 @@ namespace BerryImu
         public double headingInDegreesTiltCompensated;
     };
 
-    abstract class baseLSM9DS : IDisposable
+    internal abstract class baseLSM9DS : IDisposable
     {
         protected I2cDevice i2cDeviceGyroscope;
         protected I2cDevice i2cDeviceAccelerometer;
@@ -116,7 +113,7 @@ namespace BerryImu
         }
 
         // Read a series of bytes from the gyroscope
-        public byte[] ReadBytesFromGyroscope(byte regAddr, int length)
+        protected byte[] ReadBytesFromGyroscope(byte regAddr, int length)
         {
             byte[] values = new byte[length];
             byte[] buffer = new byte[1];
@@ -126,7 +123,7 @@ namespace BerryImu
         }
 
         // Read a series of bytes from the accelerometer
-        public byte[] ReadBytesFromAccelerometer(byte regAddr, int length)
+        protected byte[] ReadBytesFromAccelerometer(byte regAddr, int length)
         {
             byte[] values = new byte[length];
             byte[] buffer = new byte[1];
@@ -136,7 +133,7 @@ namespace BerryImu
         }
 
         // Read a series of bytes from the magnetometer
-        private byte[] ReadBytesFromMagnetometer(byte regAddr, int length)
+        protected byte[] ReadBytesFromMagnetometer(byte regAddr, int length)
         {
             byte[] values = new byte[length];
             byte[] buffer = new byte[1];
@@ -146,7 +143,7 @@ namespace BerryImu
         }
 
         // Write a byte to the gyroscope
-        public void WriteByteToGyroscope(byte regAddr, byte value)
+        protected void WriteByteToGyroscope(byte regAddr, byte value)
         {
             byte[] values = new byte[value];
             byte[] writeBuf = new byte[] { regAddr, value };
@@ -154,7 +151,7 @@ namespace BerryImu
         }
 
         // Write a byte to the accelerometer
-        public void WriteByteToAccelerometer(byte regAddr, byte value)
+        protected void WriteByteToAccelerometer(byte regAddr, byte value)
         {
             byte[] values = new byte[value];
             byte[] writeBuf = new byte[] { regAddr, value };
@@ -162,13 +159,21 @@ namespace BerryImu
         }
 
         // Write a byte to the magnetometer
-        public void WriteByteToMagnetometer(byte regAddr, byte value)
+        protected void WriteByteToMagnetometer(byte regAddr, byte value)
         {
             byte[] values = new byte[value];
             byte[] writeBuf = new byte[] { regAddr, value };
             i2cDeviceMagnetometer.Write(writeBuf);      // The magnetometer uses the same I2C slave address as the accelerometer
         }
 
-        public abstract void Dispose();
+        public void Dispose()
+        {
+            // Cleanup
+            i2cDeviceGyroscope.Dispose();
+            i2cDeviceAccelerometer.Dispose();
+            i2cDeviceMagnetometer.Dispose();
+        }
+
+
     }
 }

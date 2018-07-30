@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.I2c;
 
@@ -10,7 +7,7 @@ namespace BerryImu
     /// <summary>
     /// BerryIMUv2
     /// </summary>
-    class LSM9DS1 : baseLSM9DS
+    internal class LSM9DS1 : baseLSM9DS
     {
         //I2C addresses (1)
         public override byte MAG_ADDRESS => 0x1C;   //Would be 0x1E if SDO_M is HIGH	
@@ -55,110 +52,96 @@ namespace BerryImu
             WriteByteToMagnetometer(CTRL_REG4_M, 0b00000000);  // Lower power mode for Z axis
         }
 
-        public override void Dispose()
-        {
-            // Cleanup
-            i2cDeviceGyroscope.Dispose();
-            i2cDeviceMagnetometer.Dispose();
-        }
-
-
         /////////////////////////////////////////
-
         // LSM9DS1 Accel/Gyro (XL/G) Registers //
-
         /////////////////////////////////////////
 
-        public const byte ACT_THS = 0x04;
-        public const byte ACT_DUR = 0x05;
-        public const byte INT_GEN_CFG_XL = 0x06;
-        public const byte INT_GEN_THS_X_XL = 0x07;
-        public const byte INT_GEN_THS_Y_XL = 0x08;
-        public const byte INT_GEN_THS_Z_XL = 0x09;
-        public const byte INT_GEN_DUR_XL = 0x0A;
-        public const byte REFERENCE_G = 0x0B;
-        public const byte INT1_CTRL = 0x0C;
-        public const byte INT2_CTRL = 0x0D;
-        public const byte WHO_AM_I_XG = 0x0F;
-        public const byte CTRL_REG1_G = 0x10;
-        public const byte CTRL_REG2_G = 0x11;
-        public const byte CTRL_REG3_G = 0x12;
-        public const byte ORIENT_CFG_G = 0x13;
-        public const byte INT_GEN_SRC_G = 0x14;
-        public const byte OUT_TEMP_L = 0x15;
-        public const byte OUT_TEMP_H = 0x16;
-        public const byte STATUS_REG_0 = 0x17;
-        public const byte OUT_X_L_G = 0x18;
-        public const byte OUT_X_H_G = 0x19;
-        public const byte OUT_Y_L_G = 0x1A;
-        public const byte OUT_Y_H_G = 0x1B;
-        public const byte OUT_Z_L_G = 0x1C;
-        public const byte OUT_Z_H_G = 0x1D;
-        public const byte CTRL_REG4 = 0x1E;
-        public const byte CTRL_REG5_XL = 0x1F;
-        public const byte CTRL_REG6_XL = 0x20;
-        public const byte CTRL_REG7_XL = 0x21;
-        public const byte CTRL_REG8 = 0x22;
-        public const byte CTRL_REG9 = 0x23;
-        public const byte CTRL_REG10 = 0x24;
-        public const byte INT_GEN_SRC_XL = 0x26;
-        public const byte STATUS_REG_1 = 0x27;
-        public const byte OUT_X_L_XL = 0x28;
-        public const byte OUT_X_H_XL = 0x29;
-        public const byte OUT_Y_L_XL = 0x2A;
-        public const byte OUT_Y_H_XL = 0x2B;
-        public const byte OUT_Z_L_XL = 0x2C;
-        public const byte OUT_Z_H_XL = 0x2D;
-        public const byte FIFO_CTRL = 0x2E;
-        public const byte FIFO_SRC = 0x2F;
-        public const byte INT_GEN_CFG_G = 0x30;
-        public const byte INT_GEN_THS_XH_G = 0x31;
-        public const byte INT_GEN_THS_XL_G = 0x32;
-        public const byte INT_GEN_THS_YH_G = 0x33;
-        public const byte INT_GEN_THS_YL_G = 0x34;
-        public const byte INT_GEN_THS_ZH_G = 0x35;
-        public const byte INT_GEN_THS_ZL_G = 0x36;
-        public const byte INT_GEN_DUR_G = 0x37;
+        private const byte ACT_THS = 0x04;
+        private const byte ACT_DUR = 0x05;
+        private const byte INT_GEN_CFG_XL = 0x06;
+        private const byte INT_GEN_THS_X_XL = 0x07;
+        private const byte INT_GEN_THS_Y_XL = 0x08;
+        private const byte INT_GEN_THS_Z_XL = 0x09;
+        private const byte INT_GEN_DUR_XL = 0x0A;
+        private const byte REFERENCE_G = 0x0B;
+        private const byte INT1_CTRL = 0x0C;
+        private const byte INT2_CTRL = 0x0D;
+        private const byte WHO_AM_I_XG = 0x0F;
+        private const byte CTRL_REG1_G = 0x10;
+        private const byte CTRL_REG2_G = 0x11;
+        private const byte CTRL_REG3_G = 0x12;
+        private const byte ORIENT_CFG_G = 0x13;
+        private const byte INT_GEN_SRC_G = 0x14;
+        private const byte OUT_TEMP_L = 0x15;
+        private const byte OUT_TEMP_H = 0x16;
+        private const byte STATUS_REG_0 = 0x17;
+        private const byte OUT_X_L_G = 0x18;
+        private const byte OUT_X_H_G = 0x19;
+        private const byte OUT_Y_L_G = 0x1A;
+        private const byte OUT_Y_H_G = 0x1B;
+        private const byte OUT_Z_L_G = 0x1C;
+        private const byte OUT_Z_H_G = 0x1D;
+        private const byte CTRL_REG4 = 0x1E;
+        private const byte CTRL_REG5_XL = 0x1F;
+        private const byte CTRL_REG6_XL = 0x20;
+        private const byte CTRL_REG7_XL = 0x21;
+        private const byte CTRL_REG8 = 0x22;
+        private const byte CTRL_REG9 = 0x23;
+        private const byte CTRL_REG10 = 0x24;
+        private const byte INT_GEN_SRC_XL = 0x26;
+        private const byte STATUS_REG_1 = 0x27;
+        private const byte OUT_X_L_XL = 0x28;
+        private const byte OUT_X_H_XL = 0x29;
+        private const byte OUT_Y_L_XL = 0x2A;
+        private const byte OUT_Y_H_XL = 0x2B;
+        private const byte OUT_Z_L_XL = 0x2C;
+        private const byte OUT_Z_H_XL = 0x2D;
+        private const byte FIFO_CTRL = 0x2E;
+        private const byte FIFO_SRC = 0x2F;
+        private const byte INT_GEN_CFG_G = 0x30;
+        private const byte INT_GEN_THS_XH_G = 0x31;
+        private const byte INT_GEN_THS_XL_G = 0x32;
+        private const byte INT_GEN_THS_YH_G = 0x33;
+        private const byte INT_GEN_THS_YL_G = 0x34;
+        private const byte INT_GEN_THS_ZH_G = 0x35;
+        private const byte INT_GEN_THS_ZL_G = 0x36;
+        private const byte INT_GEN_DUR_G = 0x37;
 
 
         ///////////////////////////////
-
         // LSM9DS1 Magneto Registers //
-
         ///////////////////////////////
 
-        public const byte OFFSET_X_REG_L_M = 0x05;
-        public const byte OFFSET_X_REG_H_M = 0x06;
-        public const byte OFFSET_Y_REG_L_M = 0x07;
-        public const byte OFFSET_Y_REG_H_M = 0x08;
-        public const byte OFFSET_Z_REG_L_M = 0x09;
-        public const byte OFFSET_Z_REG_H_M = 0x0A;
-        public const byte WHO_AM_I_M = 0x0F;
-        public const byte CTRL_REG1_M = 0x20;
-        public const byte CTRL_REG2_M = 0x21;
-        public const byte CTRL_REG3_M = 0x22;
-        public const byte CTRL_REG4_M = 0x23;
-        public const byte CTRL_REG5_M = 0x24;
-        public const byte STATUS_REG_M = 0x27;
-        public const byte OUT_X_L_M = 0x28;
-        public const byte OUT_X_H_M = 0x29;
-        public const byte OUT_Y_L_M = 0x2A;
-        public const byte OUT_Y_H_M = 0x2B;
-        public const byte OUT_Z_L_M = 0x2C;
-        public const byte OUT_Z_H_M = 0x2D;
-        public const byte INT_CFG_M = 0x30;
-        public const byte INT_SRC_M = 0x30;
-        public const byte INT_THS_L_M = 0x32;
-        public const byte INT_THS_H_M = 0x33;
+        private const byte OFFSET_X_REG_L_M = 0x05;
+        private const byte OFFSET_X_REG_H_M = 0x06;
+        private const byte OFFSET_Y_REG_L_M = 0x07;
+        private const byte OFFSET_Y_REG_H_M = 0x08;
+        private const byte OFFSET_Z_REG_L_M = 0x09;
+        private const byte OFFSET_Z_REG_H_M = 0x0A;
+        private const byte WHO_AM_I_M = 0x0F;
+        private const byte CTRL_REG1_M = 0x20;
+        private const byte CTRL_REG2_M = 0x21;
+        private const byte CTRL_REG3_M = 0x22;
+        private const byte CTRL_REG4_M = 0x23;
+        private const byte CTRL_REG5_M = 0x24;
+        private const byte STATUS_REG_M = 0x27;
+        private const byte OUT_X_L_M = 0x28;
+        private const byte OUT_X_H_M = 0x29;
+        private const byte OUT_Y_L_M = 0x2A;
+        private const byte OUT_Y_H_M = 0x2B;
+        private const byte OUT_Z_L_M = 0x2C;
+        private const byte OUT_Z_H_M = 0x2D;
+        private const byte INT_CFG_M = 0x30;
+        private const byte INT_SRC_M = 0x30;
+        private const byte INT_THS_L_M = 0x32;
+        private const byte INT_THS_H_M = 0x33;
 
         ////////////////////////////////
-
         // LSM9DS1 WHO_AM_I Responses //
-
         ////////////////////////////////
 
-        public const byte WHO_AM_I_AG_RSP = 0x68;
-        public const byte WHO_AM_I_M_RSP = 0x3D;
+        private const byte WHO_AM_I_AG_RSP = 0x68;
+        private const byte WHO_AM_I_M_RSP = 0x3D;
 
 
     }
