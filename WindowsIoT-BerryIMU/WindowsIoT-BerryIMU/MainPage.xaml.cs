@@ -3,36 +3,16 @@ using System.Threading;
 using Windows.UI.Xaml.Controls;
 using Windows.Devices.Enumeration;
 using Windows.Devices.I2c;
- 
- 
+using System.Text;
+
 namespace BerryImu
 {
-    struct Gyroscope
-    {
-        public double rawX;
-        public double rawY;
-        public double rawZ;
-    };
-    struct Accelerometer
-    {
-        public double rawX;
-        public double rawY;
-        public double rawZ;
-    };
-    struct Magnetometer
-    {
-        public double rawX;
-        public double rawY;
-        public double rawZ;
-        public double headingInDegrees;
-        public double headingInDegreesTiltCompensated;
-    };
  
     public sealed partial class MainPage : Page
     {
-        private I2cDevice i2cDeviceGyroscope, i2cDeviceAccelerometerMagnetometer;
         private Timer periodicTimer;
- 
+        private baseLSM9DS lsm9Ds;
+
         const double gyroscopeAngularRateSensitivity = 0.070; // deg/s/LSB (Angular rate FS = ±2000 degrees per second)
         const double complementaryFilterConstant = 0.03;     // Complementary filter constant
         const int loopDeltaInMilliseconds = 100;         //DT is the loop delta in milliseconds.
@@ -65,43 +45,36 @@ namespace BerryImu
                 DisplayTextStatus.Text = "No I2C controllers were found on the system";
                 return;
             }
- 
-            // Specify I2C slave addresses for the Gyro and Accelerometer on BerryIMU. 
-            //      Note; the magenetormeter(compass) uses the same address as the accelerometer.
-            //      We will use the ACC_ADDRESS I2C settings to access both the accelerometer and the magnetometer.
-            var i2cConnectionSettingsGyroscope = new I2cConnectionSettings(LSM9DS0.GYR_ADDRESS);
-            var i2cConnectionSettingsAccelerometerMagnetometer = new I2cConnectionSettings(LSM9DS0.ACC_ADDRESS);
- 
-            // Enable 400kHz I2C bus speed
-            i2cConnectionSettingsGyroscope.BusSpeed = I2cBusSpeed.FastMode; // 400kHz
-            i2cConnectionSettingsAccelerometerMagnetometer.BusSpeed = I2cBusSpeed.FastMode; // 400kHz
- 
-            // Create I2cDevices with our selected bus controller and I2C settings
-            i2cDeviceGyroscope = await I2cDevice.FromIdAsync(discoveredI2cDevices[0].Id, i2cConnectionSettingsGyroscope);
-            i2cDeviceAccelerometerMagnetometer = await I2cDevice.FromIdAsync(discoveredI2cDevices[0].Id, i2cConnectionSettingsAccelerometerMagnetometer);
- 
-            // Enable the gyrscope
-            WriteByteToGyroscope(LSM9DS0.CTRL_REG1_G, 0x0F);    // Normal power mode, all axes enabled)
-            WriteByteToGyroscope(LSM9DS0.CTRL_REG4_G, 0x30);    // Continuos update, 2000 degrees/s full scale
- 
-            //Enable the accelerometer
-            WriteByteToAccelerometer(LSM9DS0.CTRL_REG1_XM, 0x67);    // z,y,x axis enabled, continuous update,  100Hz data rate
-            WriteByteToAccelerometer(LSM9DS0.CTRL_REG2_XM, 0x20);    // +/- 16G full scale
- 
-            // Enable the magnetometer
-            WriteByteToMagnetometer(LSM9DS0.CTRL_REG5_XM, 0xF0); // Temp enable, Magnetometer data rate = 50Hz
-            WriteByteToMagnetometer(LSM9DS0.CTRL_REG6_XM, 0x60); // +/-12 gauss full scale
-            WriteByteToMagnetometer(LSM9DS0.CTRL_REG7_XM, 0x0);  // Continuous - conversion mode
- 
-            // Now that everything is initialized, create a timer so we read data every DT
-            periodicTimer = new Timer(this.TimerCallback, null, 0, loopDeltaInMilliseconds);
+
+            try
+            {
+                var str = new StringBuilder();
+                foreach (var device in discoveredI2cDevices)
+                {
+                    str.AppendLine($"{device.Name} ({device.Id}) {device.Kind}.");
+                }
+                DisplayTextStatus.Text = str.ToString();
+
+                lsm9Ds = discoveredI2cDevices[0].Id[discoveredI2cDevices[0].Id.Length - 1] == '1' ?
+                    (baseLSM9DS)new LSM9DS1() : (baseLSM9DS)new LSM9DS0();
+
+                await lsm9Ds.Initialise(discoveredI2cDevices[0].Id);
+
+                // Now that everything is initialized, create a timer so we read data every DT
+                periodicTimer = new Timer(this.TimerCallback, null, 0, loopDeltaInMilliseconds);
+
+                DisplayTextStatus.Text = "Initialized I2CBerryIMU";
+            }
+            catch (Exception ex)
+            {
+                DisplayTextStatus.Text = ex.ToString();
+            }
         }
- 
+
         private void MainPage_Unloaded(object sender, object args)
         {
             // Cleanup
-            i2cDeviceGyroscope.Dispose();
-            i2cDeviceAccelerometerMagnetometer.Dispose();
+            lsm9Ds.Dispose();
         }
  
         private void TimerCallback(object state)
@@ -124,7 +97,7 @@ namespace BerryImu
  
             try
             {
-                Gyroscope gyroscopeReadings = GetGyroscopeReadings();
+                Gyroscope gyroscopeReadings = lsm9Ds.GetGyroscopeReadings();
  
                 //Convert Gyro raw data to degrees/s
                 gyroscopeDegreesPerSecondX = gyroscopeReadings.rawX * gyroscopeAngularRateSensitivity;
@@ -136,13 +109,13 @@ namespace BerryImu
                 gyroscopeAngleY += gyroscopeDegreesPerSecondY * loopDeltaInMilliseconds / 1000;
                 gyroscopeAngleZ += gyroscopeDegreesPerSecondZ * loopDeltaInMilliseconds / 1000;
  
-                Accelerometer accelerometerReadings = GetAccelerometerReadings();
+                Accelerometer accelerometerReadings = lsm9Ds.GetAccelerometerReadings();
  
                 //Convert Accelerometer values to degrees
                 var accelerometerAngleInDegreesX = (Math.Atan2(accelerometerReadings.rawY, accelerometerReadings.rawZ) + Math.PI) * (180.0 / Math.PI);
                 var accelerometerAngleInDegreesY = (Math.Atan2(accelerometerReadings.rawZ, accelerometerReadings.rawX) + Math.PI) * (180.0 / Math.PI);
  
-                Magnetometer magnetometerReadings = GetMagnetometerReadings();
+                Magnetometer magnetometerReadings = lsm9Ds.GetMagnetometerReadings();
  
                 magnetometerReadings.headingInDegrees = (Math.Atan2(magnetometerReadings.rawY, magnetometerReadings.rawX)) * (180.0 / Math.PI);
  
@@ -289,129 +262,5 @@ namespace BerryImu
                 DisplayTextStatus.Text = textStatus;
             });
         }
- 
-        // Read a series of bytes from the gyroscope
-        private byte[] ReadBytesFromGyroscope(byte regAddr, int length)
-        {
-            byte[] values = new byte[length];
-            byte[] buffer = new byte[1];
-            buffer[0] = (byte)(0x80 | regAddr);  // The MSB is set as this is required by the LSM9DSO to auto increment when reading a series of bytes
-            i2cDeviceGyroscope.WriteRead(buffer, values);
-            return values;
-        }
- 
-        // Read a series of bytes from the accelerometer
-        private byte[] ReadBytesFromAccelerometer(byte regAddr, int length)
-        {
-            byte[] values = new byte[length];
-            byte[] buffer = new byte[1];
-            buffer[0] = (byte)(0x80 | regAddr);
-            i2cDeviceAccelerometerMagnetometer.WriteRead(buffer, values);
-            return values;
-        }
- 
-        // Read a series of bytes from the magnetometer
-        private byte[] ReadBytesFromMagnetometer(byte regAddr, int length)
-        {
-            byte[] values = new byte[length];
-            byte[] buffer = new byte[1];
-            buffer[0] = (byte)(0x80 | regAddr);
-            i2cDeviceAccelerometerMagnetometer.WriteRead(buffer, values);    // The magnetometer uses the same I2C slave address as the accelerometer
-            return values;
-        }
- 
-        // Write a byte to the gyroscope
-        private void WriteByteToGyroscope(byte regAddr, byte value)
-        {
-            byte[] values = new byte[value];
-            byte[] writeBuf = new byte[] { regAddr, value };
-            i2cDeviceGyroscope.Write(writeBuf);
-        }
- 
-        // Write a byte to the accelerometer
-        private void WriteByteToAccelerometer(byte regAddr, byte value)
-        {
-            byte[] values = new byte[value];
-            byte[] writeBuf = new byte[] { regAddr, value };
-            i2cDeviceAccelerometerMagnetometer.Write(writeBuf);
-        }
- 
-        // Write a byte to the magnetometer
-        private void WriteByteToMagnetometer(byte regAddr, byte value)
-        {
-            byte[] values = new byte[value];
-            byte[] writeBuf = new byte[] { regAddr, value };
-            i2cDeviceAccelerometerMagnetometer.Write(writeBuf);      // The magnetometer uses the same I2C slave address as the accelerometer
-        }
- 
-        private Gyroscope GetGyroscopeReadings()
-        {
-            //Read the measurements from the sensors, combine and convert to correct values
-            //The values are expressed in 2’s complement (MSB for the sign and then 15 bits for the value)
-            //Start at OUT_X_L_G and read 6 bytes.
-            byte[] data = ReadBytesFromGyroscope(LSM9DS0.OUT_X_L_G, (byte)6);
- 
-            int gyroscopeRawX = (int)(data[0] | (data[1] << 8));
-            int gyroscopeRawY = (int)(data[2] | (data[3] << 8));
-            int gyroscopeRawZ = (int)(data[4] | (data[5] << 8));
-            if (gyroscopeRawX >= 32768) gyroscopeRawX = gyroscopeRawX - 65536;
-            if (gyroscopeRawY >= 32768) gyroscopeRawY = gyroscopeRawY - 65536;
-            if (gyroscopeRawZ >= 32768) gyroscopeRawZ = gyroscopeRawZ - 65536;
- 
-            Gyroscope gyroscopeReadings;
-            gyroscopeReadings.rawX = gyroscopeRawX;
-            gyroscopeReadings.rawY = gyroscopeRawY;
-            gyroscopeReadings.rawZ = gyroscopeRawZ;
- 
-            return gyroscopeReadings;
-        }
- 
-        private Accelerometer GetAccelerometerReadings()
-        {
-            //Read the measurements from the sensors, combine and convert to correct values
-            //The values are expressed in 2’s complement (MSB for the sign and then 15 bits for the value)
-            //Start at OUT_X_L_A and read 6 bytes.
- 
-            byte[] data = ReadBytesFromAccelerometer(LSM9DS0.OUT_X_L_A, (byte)6);
- 
-            int accelerometerRawX = (int)(data[0] | (data[1] << 8));
-            int accelerometerRawY = (int)(data[2] | (data[3] << 8));
-            int accelerometerRawZ = (int)(data[4] | (data[5] << 8));
-            if (accelerometerRawX >= 32768) accelerometerRawX = accelerometerRawX - 65536;
-            if (accelerometerRawY >= 32768) accelerometerRawY = accelerometerRawY - 65536;
-            if (accelerometerRawZ >= 32768) accelerometerRawZ = accelerometerRawZ - 65536;
- 
-            Accelerometer accelerometerReadings;
-            accelerometerReadings.rawX = accelerometerRawX;
-            accelerometerReadings.rawY = accelerometerRawY;
-            accelerometerReadings.rawZ = accelerometerRawZ;
- 
-            return accelerometerReadings;
-        }
- 
-        private Magnetometer GetMagnetometerReadings()
-        {
-            //Read the measurements from the sensors, combine and convert to correct values
-            //The values are expressed in 2’s complement (MSB for the sign and then 15 bits for the value)
-            //Start at OUT_X_L_A and read 6 bytes.
- 
-            byte[] data = ReadBytesFromMagnetometer(LSM9DS0.OUT_X_L_M, (byte)6);
- 
-            int magnetometerRawX = (int)(data[0] | (data[1] << 8));
-            int magnetometerRawY = (int)(data[2] | (data[3] << 8));
-            int magnetometerRawZ = (int)(data[4] | (data[5] << 8));
-            if (magnetometerRawX >= 32768) magnetometerRawX = magnetometerRawX - 65536;
-            if (magnetometerRawY >= 32768) magnetometerRawY = magnetometerRawY - 65536;
-            if (magnetometerRawZ >= 32768) magnetometerRawZ = magnetometerRawZ - 65536;
- 
-            Magnetometer magnetometerReadings;
-            magnetometerReadings.rawX = magnetometerRawX;
-            magnetometerReadings.rawY = magnetometerRawY;
-            magnetometerReadings.rawZ = magnetometerRawZ;
-            magnetometerReadings.headingInDegrees = 0.0;
-            magnetometerReadings.headingInDegreesTiltCompensated = 0.0;
- 
-            return magnetometerReadings;
-        }
-    }
+     }
 }

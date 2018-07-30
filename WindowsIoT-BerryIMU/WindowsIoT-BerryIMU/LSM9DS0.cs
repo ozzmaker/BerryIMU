@@ -3,15 +3,63 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.I2c;
 
 namespace BerryImu
 {
-    class LSM9DS0
+    /// <summary>
+    /// For BerryIMUv1
+    /// </summary>
+    class LSM9DS0: baseLSM9DS
     {
-        //I2C addresses
-        public const byte MAG_ADDRESS = 0x1E;
-        public const byte ACC_ADDRESS = 0x1E;
-        public const byte GYR_ADDRESS = 0x6A;
+        //I2C addresses (0)
+        public override byte MAG_ADDRESS => 0x1E;
+        public override byte ACC_ADDRESS => 0x1E;
+        public override byte GYR_ADDRESS => 0x6A;
+        public override byte GYR_OUT_X_L_G => OUT_X_L_G;
+        public override byte ACC_OUT_X_L => OUT_X_L_A;
+        public override byte MAG_OUT_X_L => OUT_X_L_M;
+
+
+        public override async Task Initialise(string discoveredI2cDevice)
+        {
+            // Specify I2C slave addresses for the Gyro and Accelerometer on BerryIMU. 
+            //      Note; the magenetormeter(compass) uses the same address as the accelerometer.
+            //      We will use the ACC_ADDRESS I2C settings to access both the accelerometer and the magnetometer.
+            var i2cConnectionSettingsGyroscope = new I2cConnectionSettings(GYR_ADDRESS);
+            var i2cConnectionSettingsAccelerometerMagnetometer = new I2cConnectionSettings(ACC_ADDRESS);
+
+            // Enable 400kHz I2C bus speed
+            i2cConnectionSettingsGyroscope.BusSpeed = I2cBusSpeed.FastMode; // 400kHz
+            i2cConnectionSettingsAccelerometerMagnetometer.BusSpeed = I2cBusSpeed.FastMode; // 400kHz
+
+            // Create I2cDevices with our selected bus controller and I2C settings
+            i2cDeviceGyroscope = await I2cDevice.FromIdAsync(discoveredI2cDevice, i2cConnectionSettingsGyroscope);
+
+            var i2cDeviceAccelerometerMagnetometer = 
+                await I2cDevice.FromIdAsync(discoveredI2cDevice, i2cConnectionSettingsAccelerometerMagnetometer);
+            i2cDeviceAccelerometer = i2cDeviceMagnetometer = i2cDeviceAccelerometerMagnetometer;
+
+            // Enable the gyrscope
+            WriteByteToGyroscope(LSM9DS0.CTRL_REG1_G, 0x0F);    // Normal power mode, all axes enabled)
+            WriteByteToGyroscope(LSM9DS0.CTRL_REG4_G, 0x30);    // Continuos update, 2000 degrees/s full scale
+
+            //Enable the accelerometer
+            WriteByteToAccelerometer(LSM9DS0.CTRL_REG1_XM, 0x67);    // z,y,x axis enabled, continuous update,  100Hz data rate
+            WriteByteToAccelerometer(LSM9DS0.CTRL_REG2_XM, 0x20);    // +/- 16G full scale
+
+            // Enable the magnetometer
+            WriteByteToMagnetometer(LSM9DS0.CTRL_REG5_XM, 0xF0); // Temp enable, Magnetometer data rate = 50Hz
+            WriteByteToMagnetometer(LSM9DS0.CTRL_REG6_XM, 0x60); // +/-12 gauss full scale
+            WriteByteToMagnetometer(LSM9DS0.CTRL_REG7_XM, 0x0);  // Continuous - conversion mode
+        }
+
+        public override void Dispose()
+        {
+            // Cleanup
+            i2cDeviceGyroscope.Dispose();
+            i2cDeviceMagnetometer.Dispose();
+        }
 
 
         //////////////////////////////////////////
@@ -100,8 +148,6 @@ namespace BerryImu
         public const byte TIME_LIMIT = 0x3B;
         public const byte TIME_LATENCY = 0x3C;
         public const byte TIME_WINDOW = 0x3D;
-
-
 
     }
 }
