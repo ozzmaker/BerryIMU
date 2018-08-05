@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/WindowsIoT-BerryIMU/.vs/WindowsIoT-BerryIMU
+/WindowsIoT-BerryIMU/WindowsIoT-BerryIMU/bin/ARM/Debug
+/WindowsIoT-BerryIMU/WindowsIoT-BerryIMU/obj
+*.user
+*user
+/WindowsIoT-BerryIMU/.vs/config/applicationhost.config
+/WindowsIoT-BerryIMU/WindowsIoT-BerryIMU/project.lock.json
+/WindowsIoT-BerryIMU/WindowsIoT-BerryIMU/bin
