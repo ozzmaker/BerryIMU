@@ -1,5 +1,7 @@
-* Developed by Mark Williams
-* Created April 2015
+A simple program that demonstrates how to program a magnetometer
+on the Raspberry Pi and includes tilt compensation.
+
+Both the BerryIMUv1 and BerryIMUv2 are supported.
 
 
 To compile;
