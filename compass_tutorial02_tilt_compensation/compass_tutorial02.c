@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 		readMAG(magRaw);
 		readACC(accRaw);
 
-		//If your IMU is upside down, comment out the two lines below which will correct the tilt calculation
+		//If your IMU is upside down(Skull logo facing up), comment out the two lines below which will correct the tilt calculation
 		//accRaw[0] = -accRaw[0];
 		//accRaw[1] = -accRaw[1];
 
