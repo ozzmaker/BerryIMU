@@ -1,0 +1,9 @@
+./compass_tutorial02_tilt_compensation/IMU.c~
+./compass_tutorial04_graphical_output/IMU.c~
+./gyro_accelerometer_tutorial02_inclinometer/gyro_accelerometer_tutorial02.c~
+./gyro_accelerometer_tutorial02_inclinometer/IMU.c~
+./gyro_accelerometer_tutorial01_angles/IMU.c~
+./gyro_accelerometer_tutorial03_kalman_filter/IMU.c~
+./compass_tutorial01_basics/IMU.c~
+./compass_tutorial03_calibration/IMU.c~
+./compass_tutorial03_calibration/compass_tutorial03.c~

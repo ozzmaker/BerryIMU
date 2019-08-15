@@ -18,15 +18,12 @@
 #include <stdint.h>
 #include "LSM9DS0.h"
 #include "LSM9DS1.h"
-#include <linux/i2c-dev.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <signal.h>
 #include "IMU.c"
-
-
 #include "sdl.c"
 
 
@@ -35,12 +32,12 @@
 // Calibrating the compass isnt mandatory, however a calibrated 
 // compass will result in a more accurate heading values.
 
-#define magXmin -32767
-#define magYmin -32767
-#define magZmin -32767
-#define magXmax 32767
-#define magYmax 32767
-#define magZmax 32767
+#define magXmin 0.0
+#define magYmin 0.0
+#define magZmin 0.0
+#define magXmax 0.0
+#define magYmax 0.0
+#define magZmax 0.0
 
 /*Here is an example:
 #define magXmin -1437

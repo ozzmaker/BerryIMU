@@ -11,15 +11,14 @@
     http://ozzmaker.com/
 */
 
-
-
+#include <sys/time.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <math.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <string.h>
 #include <time.h>
 #include "IMU.c"
 
@@ -32,6 +31,7 @@
 #define RAD_TO_DEG 57.29578
 #define M_PI 3.14159265358979323846
  
+
 
 
 

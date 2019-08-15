@@ -14,8 +14,10 @@
     http://ozzmaker.com/
 */
 
+#include <sys/time.h>
 #include "SDL.h"
 #include "SDL/SDL_image.h"
+#include "SDL/SDL_rotozoom.h"
 #include <unistd.h>
 #include <math.h>
 #include <signal.h>
@@ -198,7 +200,7 @@ int startSDL()
 	SDL_ShowCursor(SDL_DISABLE);
 
 	//Get information about the current video device.  E.g. resolution and bits per pixal
-	videoInfo = SDL_GetVideoInfo ();
+	const SDL_VideoInfo* videoInfo = SDL_GetVideoInfo();
 
 	//Setup a Video mode.
 	screen = SDL_SetVideoMode(videoInfo->current_w, videoInfo->current_h, videoInfo->vfmt->BitsPerPixel, SDL_SWSURFACE );

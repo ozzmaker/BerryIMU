@@ -22,24 +22,23 @@ SDL_Surface* textSurface = NULL;
 SDL_Surface* currentDegressRotated = NULL;
 TTF_Font *font;
 
-SDL_VideoInfo* videoInfo;
+
 
 void startSDL()
 {
         //fb1 = small TFT.   fb0 = HDMI/RCA output
-	putenv("SDL_FBDEV=/dev/fb1");
+        putenv("SDL_FBDEV=/dev/fb1");
 
 
 
-	//Initialize  SDL and disable mouse
+        //Initialize  SDL and disable mouse
         SDL_Init(SDL_INIT_VIDEO);
         SDL_ShowCursor(SDL_DISABLE);
 
-	//Get information about the current video device.  E.g. resolution and bits per pixal
-        videoInfo = SDL_GetVideoInfo ();
+        //Get information about the current video device.  E.g. resolution and bits per pixal
+        const SDL_VideoInfo* videoInfo = SDL_GetVideoInfo();
 
-
-	//Setup a Video mode.
+        //Setup a Video mode.
         screen = SDL_SetVideoMode(videoInfo->current_w, videoInfo->current_h, videoInfo->vfmt->BitsPerPixel, SDL_SWSURFACE );
         if ( screen == NULL ) {
                 fprintf(stderr, "Unable to setvideo: %s\n", SDL_GetError());
@@ -52,12 +51,12 @@ void startSDL()
         font = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 42);
 
 
-	//Load compass images
+        //Load compass images
         outerRing =  IMG_Load("OuterRing.png");
         compassNeedle =  IMG_Load("CompassNeedle.png");
         if (outerRing == NULL || compassNeedle == NULL) printf("error\n");
 
-	//Convert Alpha to a compatible format
+        //Convert Alpha to a compatible format
         compatibleOuterRing = SDL_DisplayFormatAlpha( outerRing );
         compatibleCompassNeedle = SDL_DisplayFormatAlpha( compassNeedle);
 
@@ -103,26 +102,26 @@ int graphics( float heading)
 
         char headingString[8] = "";
 
-	//Clear previous image
+        //Clear previous image
         SDL_FillRect(screen, NULL, 0x000000);
 
-	//Convert heading value which is a float to a string
+        //Convert heading value which is a float to a string
         snprintf(headingString, 7, "%7.3f", heading);
 
         textSurface = TTF_RenderText_Solid(font, headingString, colorWhite);
 
-	//Rotate the heading
+        //Rotate the heading
         currentDegressRotated =  rotozoomSurface(textSurface, TEXTANGLE, 1.0, 0);
 
-	//Position the outer ring in the center of display
+        //Position the outer ring in the center of display
         outerRingposition.x = (SCREEN_WIDTH - compatibleOuterRing->w)/2;
         outerRingposition.y = (SCREEN_HEIGHT - compatibleOuterRing->h)/2;
 
-	//Position compass needle
+        //Position compass needle
         compassNeedlePosition.x = (SCREEN_WIDTH - compatibleCompassNeedle->w)/2;
         compassNeedlePosition.y = 20;
 
-	//Rotate needle based on angle. Add 90 degrees for correction.
+        //Rotate needle based on angle. Add 90 degrees for correction.
         rotation = rotozoomSurface(compatibleCompassNeedle, heading+90, 1.0, 0);
         if (rotation == NULL) printf("error rotating needle\n");
 
@@ -135,7 +134,7 @@ int graphics( float heading)
         SDL_BlitSurface(compatibleOuterRing, NULL, screen, &outerRingposition);
         SDL_BlitSurface(rotation, NULL, screen, &compassNeedlePosition);
 
-	// send the screen surface to be displayed
+        // send the screen surface to be displayed
         SDL_Flip(screen);
 
         SDL_FreeSurface(currentDegressRotated);

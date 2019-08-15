@@ -29,12 +29,12 @@ void readMAG(int * m);
 // Calibrating the compass isnt mandatory, however a calibrated 
 // compass will result in a more accurate heading values.
 
-#define magXmin 0
-#define magYmin 0
-#define magZmin 0
-#define magXmax 0
-#define magYmax 0
-#define magZmax 0
+#define magXmin 0.0
+#define magYmin 0.0
+#define magZmin 0.0
+#define magXmax 0.0
+#define magYmax 0.0
+#define magZmax 0.0
 
 /*Here is an example:
 #define magXmin -1437
