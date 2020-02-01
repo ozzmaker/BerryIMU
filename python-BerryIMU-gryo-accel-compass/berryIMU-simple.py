@@ -1,15 +1,21 @@
 #!/usr/bin/python
-#	This is the base code needed to get usable angles from a BerryIMU 
-#	using a Complementary filter. The readings can be improved by 
-#	adding more filters, E.g Kalman, Low pass, median filter, etc..
-#   See berryIMU.py for more advanced code.
 #
-#	For this code to work correctly, BerryIMU must be facing the
-#	correct way up. This is when the Skull Logo on the PCB is facing down.
+#       This is the base code needed to get usable angles from a BerryIMU
+#       using a Complementary filter. The readings can be improved by
+#       adding more filters, E.g Kalman, Low pass, median filter, etc..
+#       See berryIMU.py for more advanced code.
 #
-#   Both the BerryIMUv1 and BerryIMUv2 are supported
+#       For this code to work correctly, BerryIMU must be facing the
+#       correct way up. This is when the Skull Logo on the PCB is facing down.
 #
-#	http://ozzmaker.com/
+#       Both the BerryIMUv1 and BerryIMUv2 are supported
+#
+#       This script is python 2.7 and 3 compatible
+#
+#       Feel free to do whatever you like with this code.
+#       Distributed as-is; no warranty is given.
+#
+#       http://ozzmaker.com/
 
 
 import time
@@ -26,8 +32,8 @@ G_GAIN = 0.070  # [deg/s/LSB]  If you change the dps for gyro, you need to updat
 AA =  0.40      # Complementary filter constant
 
 ################# Compass Calibration values ############
-# Use calibrateBerryIMU.py to get calibration values 
-# Calibrating the compass isnt mandatory, however a calibrated 
+# Use calibrateBerryIMU.py to get calibration values
+# Calibrating the compass isnt mandatory, however a calibrated
 # compass will result in a more accurate heading values.
 
 magXmin =  0
@@ -84,16 +90,16 @@ while True:
     MAGz = IMU.readMAGz()
 
 
-    #Apply compass calibration    
-    MAGx -= (magXmin + magXmax) /2 
-    MAGy -= (magYmin + magYmax) /2 
-    MAGz -= (magZmin + magZmax) /2 
+    #Apply compass calibration
+    MAGx -= (magXmin + magXmax) /2
+    MAGy -= (magYmin + magYmax) /2
+    MAGz -= (magZmin + magZmax) /2
 
     ##Calculate loop Period(LP). How long between Gyro Reads
     b = datetime.datetime.now() - a
     a = datetime.datetime.now()
     LP = b.microseconds/(1000000*1.0)
-    print "Loop Time | %5.2f|" % ( LP ),
+    outputString = "Loop Time %5.2f " % ( LP )
 
 
     #Convert Gyro raw to degrees per second
@@ -102,7 +108,7 @@ while True:
     rate_gyr_z =  GYRz * G_GAIN
 
 
-    #Calculate the angles from the gyro. 
+    #Calculate the angles from the gyro.
     gyroXangle+=rate_gyr_x*LP
     gyroYangle+=rate_gyr_y*LP
     gyroZangle+=rate_gyr_z*LP
@@ -133,7 +139,9 @@ while True:
     if heading < 0:
         heading += 360
 
-
+    ####################################################################
+    ###################Tilt compensated heading#########################
+    ####################################################################
     #Normalize accelerometer raw values.
     accXnorm = ACCx/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
     accYnorm = ACCy/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
@@ -150,8 +158,8 @@ while True:
 
     #Calculate the new tilt compensated values
     magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
-    
-     
+
+
     #The compass and accelerometer are orientated differently on the LSM9DS0 and LSM9DS1 and the Z axis on the compass
     #is also reversed. This needs to be taken into consideration when performing the calculations
     if(IMU.LSM9DS0):
@@ -166,27 +174,25 @@ while True:
 
     if tiltCompensatedHeading < 0:
         tiltCompensatedHeading += 360
+    ############################ END ##################################
 
 
+    if 1:                       #Change to '0' to stop showing the angles from the accelerometer
+        outputString += "# ACCX Angle %5.2f ACCY Angle %5.2f #  " % (AccXangle, AccYangle)
 
-    if 1:			#Change to '0' to stop showing the angles from the accelerometer
-        print ("# ACCX Angle %5.2f ACCY Angle %5.2f #  " % (AccXangle, AccYangle)),
+    if 1:                       #Change to '0' to stop  showing the angles from the gyro
+        outputString +="\t# GRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f # " % (gyroXangle,gyroYangle,gyroZangle)
 
-    if 1:			#Change to '0' to stop  showing the angles from the gyro
-        print ("\t# GRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f # " % (gyroXangle,gyroYangle,gyroZangle)),
+    if 1:                       #Change to '0' to stop  showing the angles from the complementary filter
+        outputString +="\t# CFangleX Angle %5.2f   CFangleY Angle %5.2f #" % (CFangleX,CFangleY)
 
-    if 1:			#Change to '0' to stop  showing the angles from the complementary filter
-        print ("\t# CFangleX Angle %5.2f   CFangleY Angle %5.2f #" % (CFangleX,CFangleY)),
-        
-    if 1:			#Change to '0' to stop  showing the heading
-        print ("\t# HEADING %5.2f  tiltCompensatedHeading %5.2f #" % (heading,tiltCompensatedHeading)),
+    if 1:                       #Change to '0' to stop  showing the heading
+        outputString +="\t# HEADING %5.2f  tiltCompensatedHeading %5.2f #" % (heading,tiltCompensatedHeading)
 
-    #print a new line
-    print ""  
+
+    print(outputString)
 
 
 
     #slow program down a bit, makes the output more readable
     time.sleep(0.03)
-
-

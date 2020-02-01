@@ -7,6 +7,15 @@
 #   After about 30secs or when the values are not changing, press Ctrl-C.
 #   The program will printout some text which you then need to add to
 #   berryIMU.py or berryIMU-simple.py
+#
+#   Both the BerryIMUv1 and BerryIMUv2 are supported
+#
+#   This script is python 2.7 and 3 compatible
+#
+#   Feel free to do whatever you like with this code.
+#   Distributed as-is; no warranty is given.
+#
+#   http://ozzmaker.com/
 
 
 import sys,signal,os
@@ -18,13 +27,13 @@ import datetime
 
 
 def handle_ctrl_c(signal, frame):
-    print " "
-    print "magXmin = ",  magXmin
-    print "magYmin = ",  magYmin
-    print "magZmin = ",  magZmin
-    print "magXmax = ",  magXmax
-    print "magYmax = ",  magYmax
-    print "magZmax = ",  magZmax
+    print(" ")
+    print("magXmin = ",  magXmin)
+    print("magYmin = ",  magYmin)
+    print("magZmin = ",  magZmin)
+    print("magXmax = ",  magXmax)
+    print("magYmax = ",  magYmax)
+    print("magZmax = ",  magZmax)
     sys.exit(130) # 130 is standard exit code for ctrl-c
 
 
@@ -72,7 +81,7 @@ while True:
     if MAGz < magZmin:
         magZmin = MAGz
 
-    print(" magXmin  %i  magYmin  %i  magZmin  %i  ## magXmax  %i  magYmax  %i  magZmax %i  " %(magXmin,magYmin,magZmin,magXmax,magYmax,magZmax))
+    print((" magXmin  %i  magYmin  %i  magZmin  %i  ## magXmax  %i  magYmax  %i  magZmax %i  " %(magXmin,magYmin,magZmin,magXmax,magYmax,magZmax)))
 
 
 
