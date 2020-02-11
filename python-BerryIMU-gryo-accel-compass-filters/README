@@ -5,10 +5,23 @@ and mangnetometer on a BerryIMU connected to a Raspberry Pi.
 This program includes two filters (low pass and median) to improve the
 values returned from BerryIMU by reducing noise.
 
-Both the BerryIMUv1 and BerryIMUv2 are supported
-
 
 http://ozzmaker.com/
 
-Run with:
+Both the BerryIMUv1 and BerryIMUv2 are supported
+
+BerryIMUv1 uses LSM9DS0 IMU
+BerryIMUv2 uses LSM9DS1 IMU
+
+
+Python2 and Python3 supported by this script
+
+Python2;
+Run using;
 python berryIMU.py
+python calibrateBerryIMU.py
+
+Python3;
+Run using;
+python3 berryIMU.py
+python3 calibrateBerryIMU.py
