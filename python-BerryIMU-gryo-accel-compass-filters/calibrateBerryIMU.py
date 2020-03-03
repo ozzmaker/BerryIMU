@@ -28,12 +28,14 @@ import datetime
 
 def handle_ctrl_c(signal, frame):
     print(" ")
-    print("magXmin = ",  magXmin)
-    print("magYmin = ",  magYmin)
-    print("magZmin = ",  magZmin)
-    print("magXmax = ",  magXmax)
-    print("magYmax = ",  magYmax)
-    print("magZmax = ",  magZmax)
+    print(" ")
+    print("magXmin = %i"%  (magXmin))
+    print("magYmin = %i"%  (magYmin))
+    print("magZmin = %i"%  (magZmin))
+    print("magXmax = %i"%  (magXmax))
+    print("magYmax = %i"%  (magYmax))
+    print("magZmax = %i"%  (magZmax))
+
     sys.exit(130) # 130 is standard exit code for ctrl-c
 
 
