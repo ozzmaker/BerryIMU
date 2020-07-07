@@ -33,9 +33,9 @@ while True:
     ACCx = IMU.readACCx()
     ACCy = IMU.readACCy()
     ACCz = IMU.readACCz()
-    yG = (ACCy * 0.244)/1000
+    yG = (ACCx * 0.244)/1000
     xG = (ACCy * 0.244)/1000
-    zG = (ACCy * 0.244)/1000
+    zG = (ACCz * 0.244)/1000
     print("##### X = %fG  ##### Y =   %fG  ##### Z =  %fG  #####" % ( yG, xG, zG))
 
 
