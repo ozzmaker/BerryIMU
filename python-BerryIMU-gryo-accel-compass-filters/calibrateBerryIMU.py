@@ -1,14 +1,13 @@
 #!/usr/bin/python
-#   This program is used to calibrate the compass on a BerryIMUv1 or
-#   BerryIMUv2.
+#   This script is used to calibrate the compass on a BerryIMU.
 #
-#   Start this program and rotate your BerryIMU in all directions. 
-#   You will see the maximum and minimum values change. 
+#   Start this program and rotate your BerryIMU in all directions.
+#   You will see the maximum and minimum values change.
 #   After about 30secs or when the values are not changing, press Ctrl-C.
-#   The program will printout some text which you then need to add to
+#   The script will printout some text which you then need to add to
 #   berryIMU.py or berryIMU-simple.py
 #
-#   Both the BerryIMUv1 and BerryIMUv2 are supported
+#   The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
 #
 #   This script is python 2.7 and 3 compatible
 #
@@ -28,14 +27,12 @@ import datetime
 
 def handle_ctrl_c(signal, frame):
     print(" ")
-    print(" ")
     print("magXmin = %i"%  (magXmin))
     print("magYmin = %i"%  (magYmin))
     print("magZmin = %i"%  (magZmin))
     print("magXmax = %i"%  (magXmax))
     print("magYmax = %i"%  (magYmax))
     print("magZmax = %i"%  (magZmax))
-
     sys.exit(130) # 130 is standard exit code for ctrl-c
 
 
@@ -59,16 +56,14 @@ magYmax = -32767
 magZmax = -32767
 
 
-    
+
 while True:
 
     #Read magnetometer values
     MAGx = IMU.readMAGx()
     MAGy = IMU.readMAGy()
     MAGz = IMU.readMAGz()
-    
-    
-    
+
     if MAGx > magXmax:
         magXmax = MAGx
     if MAGy > magYmax:

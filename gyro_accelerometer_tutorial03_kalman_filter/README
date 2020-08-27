@@ -4,8 +4,7 @@ Go here for more information;
 
 http://ozzmaker.com/guide-interfacing-gyro-accelerometer-raspberry-pi-kalman-filter/
 
-
-Both the BerryIMUv1 and BerryIMUv2 are supported
+The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
 
 Compile with;
 gcc -o gyro_accelerometer_tutorial03 -l rt gyro_accelerometer_tutorial03.c -lm

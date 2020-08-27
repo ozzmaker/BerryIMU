@@ -5,13 +5,12 @@
 
     A Kalman filter is used.
 
-
-    Both the BerryIMUv1 and BerryIMUv2 are supported
+    The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported.
 
     Feel free to do whatever you like with this code
     Distributed as-is; no warranty is given.
 
-    http://ozzmaker.com/
+    https://ozzmaker.com/berryimu/
 */
 
 #include <sys/time.h>

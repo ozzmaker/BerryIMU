@@ -6,12 +6,13 @@ This program includes two filters (low pass and median) to improve the
 values returned from BerryIMU by reducing noise.
 
 
-http://ozzmaker.com/
+http://ozzmaker.com/berryimu
 
-Both the BerryIMUv1 and BerryIMUv2 are supported
+The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
 
 BerryIMUv1 uses LSM9DS0 IMU
 BerryIMUv2 uses LSM9DS1 IMU
+BerryIMUv3 uses LSM6DSL and LIS3MDL
 
 
 Python2 and Python3 supported by this script

@@ -8,9 +8,13 @@ Both the BerryIMUv1 and BerryIMUv2 are supported
 
 BerryIMUv1 uses LSM9DS0 IMU
 BerryIMUv2 uses LSM9DS1 IMU
+BerryIMUv3 uses LS6MDSL and LIS3MDL 
 
 
-Python2 and Python3 supported by this script
+The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+
+This script is python 2.7 and 3 compatible
+
 
 Python2;
 Run using;

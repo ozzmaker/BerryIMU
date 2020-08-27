@@ -1,12 +1,10 @@
 /*
     A simple program that demonstrates how to program a magnetometer
     on the Raspberry Pi.
-    http://ozzmaker.com/2014/12/01/compass1
 
-    
+    http://ozzmaker.com/compass1
 
-
-    Both the BerryIMUv1 and BerryIMUv2 are supported.
+    The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported.
 
     Feel free to do whatever you like with this code.
     Distributed as-is; no warranty is given.

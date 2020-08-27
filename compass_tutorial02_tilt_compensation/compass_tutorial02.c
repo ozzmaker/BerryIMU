@@ -6,7 +6,7 @@
     If the tilt compensation isnt working, try calibrating the compass first. 
     Instructions here ttp://ozzmaker.com/compass3
 
-    Both the BerryIMUv1 and BerryIMUv2 are supported.
+    The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported.
 
     Feel free to do whatever you like with this code.
     Distributed as-is; no warranty is given.
@@ -66,10 +66,18 @@ int main(int argc, char *argv[])
 		roll = -asin(accYnorm/cos(pitch));
 
 		//Calculate the new tilt compensated values
-		magXcomp = magRaw[0]*cos(pitch)+magRaw[2]*sin(pitch);
-		if(LSM9DS0)
+		//The compass and accelerometer are orientated differently on the the BerryIMUv1, v2 and v3.
+		//needs to be taken into consideration when performing the calculations
+		//X compensation
+		if(BerryIMUversion == 1 || BerryIMUversion == 3)
+			magXcomp = magRaw[0]*cos(pitch)+magRaw[2]*sin(pitch);
+		else if (BerryIMUversion == 2)
+			magXcomp = magRaw[0]*cos(pitch)-magRaw[2]*sin(pitch);
+
+		//Y compensation
+		if(BerryIMUversion == 1 || BerryIMUversion == 3)
 			magYcomp = magRaw[0]*sin(roll)*sin(pitch)+magRaw[1]*cos(roll)-magRaw[2]*sin(roll)*cos(pitch); // LSM9DS0
-		else
+		else if (BerryIMUversion == 2)
 			magYcomp = magRaw[0]*sin(roll)*sin(pitch)+magRaw[1]*cos(roll)+magRaw[2]*sin(roll)*cos(pitch); // LSM9DS1
 
 		//Calculate heading

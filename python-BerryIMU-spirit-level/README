@@ -1,3 +1,6 @@
+* Developed by Mark Williams
+* Created April 2016
+
 This program reads the values from an IMU connected to a Raspberry Pi and uses this values to emulate a spirit level.
 
 http://ozzmaker.com/raspberry-pi-spirit-level/

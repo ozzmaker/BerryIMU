@@ -2,27 +2,27 @@
 #
 #       This program demonstrates how to convert the raw values from an accelerometer to Gs
 #
-#
-#       Both the BerryIMUv1 and BerryIMUv2 are supported
+#       The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
 #
 #       This script is python 2.7 and 3 compatible
 #
 #       Feel free to do whatever you like with this code.
 #       Distributed as-is; no warranty is given.
 #
-#       http://ozzmaker.com/
-
+#       https://ozzmaker.com/accelerometer-to-g/
 
 
 import time
 import IMU
+import sys
 
 
 
-
-IMU.detectIMU()     #Detect if BerryIMUv1 or BerryIMUv2 is connected.
+IMU.detectIMU()     #Detect if BerryIMU is connected.
+if(IMU.BerryIMUversion == 99):
+    print(" No BerryIMU found... exiting ")
+    sys.exit()
 IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
-
 
 
 

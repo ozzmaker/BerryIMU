@@ -1,30 +1,17 @@
-/*
-
-
-    These are the base functions for the BerryIMUv1 and BerryIMUv2
-
-
-    Both the BerryIMUv1 and BerryIMUv2 are supported
-
-    Feel free to do whatever you like with this code.
-    Distributed as-is; no warranty is given.
-
-    http://ozzmaker.com/
-*/
-
 #include <stdint.h>
 #include "i2c-dev.h"
 #include "LSM9DS0.h"
 #include "LSM9DS1.h"
+#include "LSM6DSL.h"
+#include "LIS3MDL.h"
 
 int file;
-int LSM9DS0 = 0;
-int LSM9DS1 = 0;
+int BerryIMUversion = 99;
 
 void  readBlock(uint8_t command, uint8_t size, uint8_t *data)
 {
-	int result = i2c_smbus_read_i2c_block_data(file, command, size, data);
-	if (result != size){
+    int result = i2c_smbus_read_i2c_block_data(file, command, size, data);
+    if (result != size){
 		printf("Failed to read block from I2C.");
 		exit(1);
 	}
@@ -33,7 +20,7 @@ void  readBlock(uint8_t command, uint8_t size, uint8_t *data)
 void selectDevice(int file, int addr)
 {
 	if (ioctl(file, I2C_SLAVE, addr) < 0) {
-		printf("Failed to select I2C device.");
+		 printf("Failed to select I2C device.");
 	}
 }
 
@@ -41,15 +28,18 @@ void selectDevice(int file, int addr)
 void readACC(int  a[])
 {
 	uint8_t block[6];
-	if (LSM9DS0){
+	if (BerryIMUversion == 1){
 		selectDevice(file,LSM9DS0_ACC_ADDRESS);
 		readBlock(0x80 |  LSM9DS0_OUT_X_L_A, sizeof(block), block);
 	}
-	else if (LSM9DS1){
+	else if (BerryIMUversion == 2){
 		selectDevice(file,LSM9DS1_ACC_ADDRESS);
-		readBlock(0x80 |  LSM9DS1_OUT_X_L_XL, sizeof(block), block);       
+		readBlock(LSM9DS1_OUT_X_L_XL, sizeof(block), block);       
 	}
-
+	else if (BerryIMUversion == 3){
+		selectDevice(file,LSM6DSL_ADDRESS);
+		readBlock(LSM6DSL_OUTX_L_XL, sizeof(block), block);    
+	}
 	// Combine readings for each axis.
 	a[0] = (int16_t)(block[0] | block[1] << 8);
 	a[1] = (int16_t)(block[2] | block[3] << 8);
@@ -60,32 +50,40 @@ void readACC(int  a[])
 void readMAG(int  m[])
 {
 	uint8_t block[6];
-	if (LSM9DS0){
+    if (BerryIMUversion == 1){
 		selectDevice(file,LSM9DS0_MAG_ADDRESS);
 		readBlock(0x80 |  LSM9DS0_OUT_X_L_M, sizeof(block), block);
 	}
-	else if (LSM9DS1){
+	else if (BerryIMUversion == 2){
 		selectDevice(file,LSM9DS1_MAG_ADDRESS);
-		readBlock(0x80 |  LSM9DS1_OUT_X_L_M, sizeof(block), block);    
+		readBlock(LSM9DS1_OUT_X_L_M, sizeof(block), block);    
+	}
+	else if (BerryIMUversion == 3){
+		selectDevice(file,LIS3MDL_ADDRESS);
+		readBlock(LIS3MDL_OUT_X_L, sizeof(block), block);    
 	}
 
 	// Combine readings for each axis.
 	m[0] = (int16_t)(block[0] | block[1] << 8);
 	m[1] = (int16_t)(block[2] | block[3] << 8);
 	m[2] = (int16_t)(block[4] | block[5] << 8);
-}
 
+}
 
 void readGYR(int g[])
 {
 	uint8_t block[6];
-    if (LSM9DS0){
+    if (BerryIMUversion == 1){
 		selectDevice(file,LSM9DS0_GYR_ADDRESS);
-		readBlock(0x80 |  LSM9DS0_OUT_X_L_M, sizeof(block), block);
+		readBlock(0x80 |  LSM9DS0_OUT_X_L_G, sizeof(block), block);
 	}
-	else if (LSM9DS1){
+	else if (BerryIMUversion == 2){
 		selectDevice(file,LSM9DS1_GYR_ADDRESS);
-		readBlock(0x80 |  LSM9DS1_OUT_X_L_M, sizeof(block), block);    
+		readBlock(LSM9DS1_OUT_X_L_G, sizeof(block), block);    
+	}
+	else if (BerryIMUversion == 3){
+		selectDevice(file,LSM6DSL_ADDRESS);
+		readBlock(LSM6DSL_OUTX_L_G, sizeof(block), block);   
 	}
 
 	// Combine readings for each axis.
@@ -97,25 +95,29 @@ void readGYR(int g[])
 
 void writeAccReg(uint8_t reg, uint8_t value)
 {
-	if (LSM9DS0)
+	if (BerryIMUversion == 1)
 		selectDevice(file,LSM9DS0_ACC_ADDRESS);
-	else if (LSM9DS1)
+	else if (BerryIMUversion == 2)
 		selectDevice(file,LSM9DS1_ACC_ADDRESS);
+	else if (BerryIMUversion == 3)
+		selectDevice(file,LSM6DSL_ADDRESS);
 
 	int result = i2c_smbus_write_byte_data(file, reg, value);
 	if (result == -1){
 		printf ("Failed to write byte to I2C Acc.");
-		exit(1);
-	}
+        exit(1);
+    }
 }
 
 void writeMagReg(uint8_t reg, uint8_t value)
 {
-	if (LSM9DS0)
+	if (BerryIMUversion == 1)
 		selectDevice(file,LSM9DS0_MAG_ADDRESS);
-	else if (LSM9DS1)
+	else if (BerryIMUversion == 2)
 		selectDevice(file,LSM9DS1_MAG_ADDRESS);
-  
+	else if (BerryIMUversion == 3)
+		selectDevice(file,LIS3MDL_ADDRESS);
+
 	int result = i2c_smbus_write_byte_data(file, reg, value);
 	if (result == -1){
 		printf("Failed to write byte to I2C Mag.");
@@ -126,17 +128,20 @@ void writeMagReg(uint8_t reg, uint8_t value)
 
 void writeGyrReg(uint8_t reg, uint8_t value)
 {
-    if (LSM9DS0)
+	if (BerryIMUversion == 1)
 		selectDevice(file,LSM9DS0_GYR_ADDRESS);
-	else if (LSM9DS1)
+	else if (BerryIMUversion == 2)
 		selectDevice(file,LSM9DS1_GYR_ADDRESS);
-  
+	else if (BerryIMUversion == 3)
+		selectDevice(file,LSM6DSL_ADDRESS);
+
 	int result = i2c_smbus_write_byte_data(file, reg, value);
 	if (result == -1){
 		printf("Failed to write byte to I2C Gyr.");
 		exit(1);
 	}
 }
+
 
 
 void detectIMU()
@@ -164,7 +169,7 @@ void detectIMU()
 
 	if (LSM9DS0_WHO_G_response == 0xd4 && LSM9DS0_WHO_XM_response == 0x49){
 		printf ("\n\n\n#####   BerryIMUv1/LSM9DS0  DETECTED    #####\n\n");
-		LSM9DS0 = 1;
+		BerryIMUversion = 1;
 	}
 
 
@@ -179,12 +184,23 @@ void detectIMU()
 
     if (LSM9DS1_WHO_XG_response == 0x68 && LSM9DS1_WHO_M_response == 0x3d){
 		printf ("\n\n\n#####   BerryIMUv2/LSM9DS1  DETECTED    #####\n\n");
-		LSM9DS1 = 1;
+		BerryIMUversion = 2;
 	}
-  
 
+	//Detect if BerryIMUv3 (Which uses a LSM6DSL and LIS3MDL) is connected
+	selectDevice(file,LSM6DSL_ADDRESS);
+	int LSM6DSL_WHO_M_response = i2c_smbus_read_byte_data(file, LSM6DSL_WHO_AM_I);
 
-	if (!LSM9DS0 && !LSM9DS1){
+	selectDevice(file,LIS3MDL_ADDRESS);	
+	int LIS3MDL_WHO_XG_response = i2c_smbus_read_byte_data(file, LIS3MDL_WHO_AM_I);
+
+	if ( LSM6DSL_WHO_M_response == 0x6A && LIS3MDL_WHO_XG_response == 0x3D){
+		printf ("\n\n\n#####   BerryIMUv3  DETECTED    #####\n\n");
+		BerryIMUversion = 3;
+	}
+
+	sleep(1);
+	if (BerryIMUversion == 99){
 		printf ("NO IMU DETECTED\n");
 		exit(1);
 	}
@@ -196,23 +212,24 @@ void detectIMU()
 void enableIMU()
 {
 
-	if (LSM9DS0){//For BerryIMUv1
+	if (BerryIMUversion == 1){//For BerryIMUv1
+		// Enable Gyroscope
+		writeGyrReg(LSM9DS0_CTRL_REG1_G, 0b00001111); // Normal power mode, all axes enabled
+		writeGyrReg(LSM9DS0_CTRL_REG4_G, 0b00110000); // Continuos update, 2000 dps full scale
+
 		// Enable accelerometer.
 		writeAccReg(LSM9DS0_CTRL_REG1_XM, 0b01100111); //  z,y,x axis enabled, continuous update,  100Hz data rate
 		writeAccReg(LSM9DS0_CTRL_REG2_XM, 0b00100000); // +/- 16G full scale
 
-		//Enable the magnetometer
+		//Enable  magnetometer
 		writeMagReg(LSM9DS0_CTRL_REG5_XM, 0b11110000); // Temp enable, M data rate = 50Hz
 		writeMagReg(LSM9DS0_CTRL_REG6_XM, 0b01100000); // +/-12gauss
 		writeMagReg(LSM9DS0_CTRL_REG7_XM, 0b00000000); // Continuous-conversion mode
 
-		// Enable Gyro
-		writeGyrReg(LSM9DS0_CTRL_REG1_G, 0b00001111); // Normal power mode, all axes enabled
-		writeGyrReg(LSM9DS0_CTRL_REG4_G, 0b00110000); // Continuos update, 2000 dps full scale
 	}
 
-	if (LSM9DS1){//For BerryIMUv2
-		// Enable the gyroscope
+	if (BerryIMUversion == 2){//For BerryIMUv2      
+		// Enable gyroscope
 		writeGyrReg(LSM9DS1_CTRL_REG4,0b00111000);      // z, y, x axis enabled for gyro
 		writeGyrReg(LSM9DS1_CTRL_REG1_G,0b10111000);    // Gyro ODR = 476Hz, 2000 dps
 		writeGyrReg(LSM9DS1_ORIENT_CFG_G,0b10111000);   // Swap orientation 
@@ -227,8 +244,21 @@ void enableIMU()
 		writeMagReg(LSM9DS1_CTRL_REG3_M, 0b00000000);   // continuos update
 		writeMagReg(LSM9DS1_CTRL_REG4_M, 0b00000000);   // lower power mode for Z axis
 	}
+	if (BerryIMUversion == 3){//For BerryIMUv3
+		//Enable  gyroscope
+		writeGyrReg(LSM6DSL_CTRL2_G,0b10011100);        // ODR 3.3 kHz, 2000 dps
+
+		// Enable the accelerometer
+		writeAccReg(LSM6DSL_CTRL1_XL,0b10011111);       // ODR 3.33 kHz, +/- 8g , BW = 400hz
+		writeAccReg(LSM6DSL_CTRL8_XL,0b11001000);       // Low pass filter enabled, BW9, composite filter
+		writeAccReg(LSM6DSL_CTRL3_C,0b01000100);        // Enable Block Data update, increment during multi byte read
+
+		//Enable  magnetometer
+		writeMagReg(LIS3MDL_CTRL_REG1, 0b11011100);     // Temp sesnor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Selft test disabled.
+		writeMagReg(LIS3MDL_CTRL_REG2, 0b00100000);     // +/- 8 gauss
+		writeMagReg(LIS3MDL_CTRL_REG3, 0b00000000);     // Continuous-conversion mode
+	}
+
 
 }
-
-
 

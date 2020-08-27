@@ -1,12 +1,15 @@
-/*
-  This program  reads the angles and heading from the accelerometer, gyroscope
-   and compass on a BerryIMU connected to an Arduino.
-  
+/*      This program  reads the angles and heading from the accelerometer, gyroscope
+        and compass on a BerryIMU connected to an Arduino.
 
-    Both the BerryIMUv1 and BerryIMUv2 are supported.
-    Feel free to do whatever you like with this code
-    Distributed as-is; no warranty is given.
-    http://ozzmaker.com/
+
+       The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+
+
+       Feel free to do whatever you like with this code.
+       Distributed as-is; no warranty is given.
+
+       https://ozzmaker.com/berryimu/
+
 */
 
 #include "IMU.h"
@@ -36,8 +39,9 @@ unsigned long startTime;
 void setup() {
          // join i2c bus (address optional for master)
   Serial.begin(115200);  // start serial for output
-
+  delay(500);
   detectIMU();
+  
   enableIMU();
 
 
@@ -63,7 +67,6 @@ void loop() {
   gyrRaw[1] = (int)(buff[2] | (buff[3] << 8));
   gyrRaw[2] = (int)(buff[4] | (buff[5] << 8));
 
-  
   //Convert Gyro raw to degrees per second
   rate_gyr_x = (float) gyrRaw[0] * G_GAIN;
   rate_gyr_y = (float) gyrRaw[1]  * G_GAIN;
@@ -128,4 +131,3 @@ void loop() {
 
 
 }
-

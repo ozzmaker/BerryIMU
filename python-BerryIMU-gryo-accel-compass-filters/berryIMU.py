@@ -3,15 +3,10 @@
 #    This program  reads the angles from the acceleromteer, gyroscope
 #    and mangnetometer on a BerryIMU connected to a Raspberry Pi.
 #
-#    Both the BerryIMUv1 and BerryIMUv2 are supported
-#
-#    BerryIMUv1 uses LSM9DS0 IMU
-#    BerryIMUv2 uses LSM9DS1 IMU
-#
-#
-#    This program includes two filters (low pass and mdeian) to improve the
+#    This program includes two filters (low pass and median) to improve the
 #    values returned from BerryIMU by reducing noise.
 #
+#    The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
 #
 #    This script is python 2.7 and 3 compatible
 #
@@ -22,16 +17,12 @@
 
 
 
-
-
 import sys
 import time
 import math
 import IMU
 import datetime
 import os
-# If the IMU is upside down (Skull logo facing up), change this value to 1
-IMU_UPSIDE_DOWN = 0
 
 
 RAD_TO_DEG = 57.29578
@@ -68,7 +59,7 @@ magYmax =  1651
 magZmax =  708
 Dont use the above values, these are just an example.
 '''
-
+############### END Calibration offsets #################
 
 
 #Kalman filter variables
@@ -196,7 +187,10 @@ mag_medianTable2X = [1] * MAG_MEDIANTABLESIZE
 mag_medianTable2Y = [1] * MAG_MEDIANTABLESIZE
 mag_medianTable2Z = [1] * MAG_MEDIANTABLESIZE
 
-IMU.detectIMU()     #Detect if BerryIMUv1 or BerryIMUv2 is connected.
+IMU.detectIMU()     #Detect if BerryIMU is connected.
+if(IMU.BerryIMUversion == 99):
+    print(" No BerryIMU found... exiting ")
+    sys.exit()
 IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
 
 
@@ -319,16 +313,8 @@ while True:
     gyroZangle+=rate_gyr_z*LP
 
     #Convert Accelerometer values to degrees
-
-    if not IMU_UPSIDE_DOWN:
-        # If the IMU is up the correct way (Skull logo facing down), use these calculations
-        AccXangle =  (math.atan2(ACCy,ACCz)*RAD_TO_DEG)
-        AccYangle =  (math.atan2(ACCz,ACCx)+M_PI)*RAD_TO_DEG
-    else:
-        #Us these four lines when the IMU is upside down. Skull logo is facing up
-        AccXangle =  (math.atan2(-ACCy,-ACCz)*RAD_TO_DEG)
-        AccYangle =  (math.atan2(-ACCz,-ACCx)+M_PI)*RAD_TO_DEG
-
+    AccXangle =  (math.atan2(ACCy,ACCz)*RAD_TO_DEG)
+    AccYangle =  (math.atan2(ACCz,ACCx)+M_PI)*RAD_TO_DEG
 
 
     #Change the rotation value of the accelerometer to -/+ 180 and
@@ -348,8 +334,6 @@ while True:
     kalmanY = kalmanFilterY(AccYangle, rate_gyr_y,LP)
     kalmanX = kalmanFilterX(AccXangle, rate_gyr_x,LP)
 
-    if IMU_UPSIDE_DOWN:
-        MAGy = -MAGy      #If IMU is upside down, this is needed to get correct heading.
     #Calculate heading
     heading = 180 * math.atan2(MAGy,MAGx)/M_PI
 
@@ -357,57 +341,57 @@ while True:
     if heading < 0:
         heading += 360
 
-
-
     ####################################################################
     ###################Tilt compensated heading#########################
     ####################################################################
     #Normalize accelerometer raw values.
-    if not IMU_UPSIDE_DOWN:
-        #Use these two lines when the IMU is up the right way. Skull logo is facing down
-        accXnorm = ACCx/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
-        accYnorm = ACCy/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
-    else:
-        #Us these four lines when the IMU is upside down. Skull logo is facing up
-        accXnorm = -ACCx/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
-        accYnorm = ACCy/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
+    accXnorm = ACCx/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
+    accYnorm = ACCy/math.sqrt(ACCx * ACCx + ACCy * ACCy + ACCz * ACCz)
+
 
     #Calculate pitch and roll
-
     pitch = math.asin(accXnorm)
     roll = -math.asin(accYnorm/math.cos(pitch))
 
 
     #Calculate the new tilt compensated values
-    magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
+    #The compass and accelerometer are orientated differently on the the BerryIMUv1, v2 and v3.
+    #This needs to be taken into consideration when performing the calculations
 
-    #The compass and accelerometer are orientated differently on the LSM9DS0 and LSM9DS1 and the Z axis on the compass
-    #is also reversed. This needs to be taken into consideration when performing the calculations
-    if(IMU.LSM9DS0):
-        magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)   #LSM9DS0
-    else:
-        magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)   #LSM9DS1
+    #X compensation
+    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+        magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
+    else:                                                                #LSM9DS1
+        magXcomp = MAGx*math.cos(pitch)-MAGz*math.sin(pitch)
+
+    #Y compensation
+    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+        magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)
+    else:                                                                #LSM9DS1
+        magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)
 
 
 
 
-        #Calculate tilt compensated heading
+
+    #Calculate tilt compensated heading
     tiltCompensatedHeading = 180 * math.atan2(magYcomp,magXcomp)/M_PI
 
     if tiltCompensatedHeading < 0:
         tiltCompensatedHeading += 360
 
 
-        ############################ END ##################################
+    ##################### END Tilt Compensation ########################
+
 
     if 1:                       #Change to '0' to stop showing the angles from the accelerometer
-        outputString += "# ACCX Angle %5.2f ACCY Angle %5.2f #  " % (AccXangle, AccYangle)
+        outputString += "#  ACCX Angle %5.2f ACCY Angle %5.2f  #  " % (AccXangle, AccYangle)
 
     if 1:                       #Change to '0' to stop  showing the angles from the gyro
         outputString +="\t# GRYX Angle %5.2f  GYRY Angle %5.2f  GYRZ Angle %5.2f # " % (gyroXangle,gyroYangle,gyroZangle)
 
     if 1:                       #Change to '0' to stop  showing the angles from the complementary filter
-        outputString +="\t# CFangleX Angle %5.2f   CFangleY Angle %5.2f #" % (CFangleX,CFangleY)
+        outputString +="\t#  CFangleX Angle %5.2f   CFangleY Angle %5.2f  #" % (CFangleX,CFangleY)
 
     if 1:                       #Change to '0' to stop  showing the heading
         outputString +="\t# HEADING %5.2f  tiltCompensatedHeading %5.2f #" % (heading,tiltCompensatedHeading)
