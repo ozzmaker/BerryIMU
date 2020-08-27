@@ -7,28 +7,13 @@ BerryIMU - An accelerometer, gyroscope, magnetometer, Barometric Pressure, Tempe
 
 Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details.
 
-<h1>BerryIMU  </h1>
+<h1>BerryIMUv2</h1>
 
-![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd1-300.jpg "BerryIMU")
-![BerryIMU](https://ozzmaker.com/wp-content/uploads/2020/08/BerryIMUv3-500.jpg "BerryIMU")
-
-
-![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/03/BerryIMUProd5-300.jpg?raw=true "BerryIMU and Raspberry Pi")
-![BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/07/BerryIMU-Arduino-300.jpg "BerryIMU and Arduino")
+![BerryIMU](https://ozzmaker.com/wp-content/uploads/2020/08/BerryIMUv2GIT.png "BerryIMUv2")
+<h1>BerryIMUv3</h1>
+![BerryIMU](https://ozzmaker.com/wp-content/uploads/2020/08/BerryIMUv3Raspberry.png "BerryIMUv3")
+![BerryIMU](https://ozzmaker.com/wp-content/uploads/2020/08/BerryIMUv3ArduinoGIT.png "BerryIMUv3")
 
 
-
-
-
-
-<h1>Wiring Diagrams</h1>
-
-<h2>Raspberry Pi</h2>
-
-![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/01/RaspberryPiBerryIMUWire1.png "Wiring Diagram")
-
-<h2>Arduino</h2>
-
-![Wiring Diagram BerryIMU](http://ozzmaker.com/wp-content/uploads/2015/07/BerryIMUArduinoWire1.png "Wiring Diagram")
 
 
