@@ -11,7 +11,9 @@ Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details
 
 ![BerryIMU](https://ozzmaker.com/wp-content/uploads/2020/08/BerryIMUv2GIT.png "BerryIMUv2")
 <h1>BerryIMUv3</h1>
+
 ![BerryIMU](https://ozzmaker.com/wp-content/uploads/2020/08/BerryIMUv3Raspberry.png "BerryIMUv3")
+
 ![BerryIMU](https://ozzmaker.com/wp-content/uploads/2020/08/BerryIMUv3ArduinoGIT.png "BerryIMUv3")
 
 
