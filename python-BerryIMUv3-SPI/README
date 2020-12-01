@@ -1,0 +1,27 @@
+
+This is the base code needed to get usable angles from a BerryIMU
+using a Complementary filter. 
+SPI communication is used
+
+http://ozzmaker.com/berryimu
+
+
+
+
+BerryIMUv3(LSM6DSL) is supported byt this code
+
+This script is python 2.7 and 3 compatible
+
+
+The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+
+Python2;
+Run using;
+python berryIMU-spi.py
+
+
+Python3;
+Run using;
+python3 berryIMU-spi.py
+
+
