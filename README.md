@@ -16,6 +16,8 @@ Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details
 
 ![BerryIMU](https://ozzmaker.com/wp-content/uploads/2020/08/BerryIMUv3ArduinoGIT.png "BerryIMUv3")
 
+![BerryIMU](https://ozzmaker.com/wp-content/uploads/2021/03/PicoI2C_SPI.png "BerryIMUv3")
+
 
 
 
