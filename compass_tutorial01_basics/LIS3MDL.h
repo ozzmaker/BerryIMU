@@ -4,6 +4,7 @@
 
 #define LIS3MDL_CTRL_REG1    0x20
 
+
 #define LIS3MDL_CTRL_REG2    0x21
 #define LIS3MDL_CTRL_REG3    0x22
 #define LIS3MDL_CTRL_REG4    0x23
