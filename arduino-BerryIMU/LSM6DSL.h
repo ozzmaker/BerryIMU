@@ -4,7 +4,7 @@
 #define LSM6DSL_WHO_AM_I            0x0F
 #define LSM6DSL_RAM_ACCESS          0x01
 #define LSM6DSL_CTRL1_XL            0x10
-#define LSM6DSL_CTRL8_XL            0x10
+#define LSM6DSL_CTRL8_XL            0x17
 #define LSM6DSL_CTRL2_G             0x11
 #define LSM6DSL_CTRL10_C            0x19
 #define LSM6DSL_TAP_CFG1            0x58
