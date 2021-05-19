@@ -21,6 +21,7 @@
 #define LIS3MDL_TEMP_OUT_L   0x2E
 #define LIS3MDL_TEMP_OUT_H   0x2F
 
+
 #define LIS3MDL_INT_CFG      0x30
 #define LIS3MDL_INT_SRC      0x31
 #define LIS3MDL_INT_THS_L    0x32
