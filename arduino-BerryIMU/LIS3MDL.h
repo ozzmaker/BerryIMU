@@ -9,6 +9,7 @@
 #define LIS3MDL_CTRL_REG4     0x23
 #define LIS3MDL_CTRL_REG5     0x24
 
+
 #define LIS3MDL_STATUS_REG    0x27
 
 #define LIS3MDL_OUT_X_L       0x28
