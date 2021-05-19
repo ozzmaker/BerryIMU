@@ -4,6 +4,7 @@
 #define LSM9DS1_GYR_ADDRESS 0x6A  //Would be 0x6B if SDO_AG is HIGH
 
 
+
 #/////////////////////////////////////////
 #// LSM9DS1 Accel/Gyro (XL/G) Registers //
 #/////////////////////////////////////////
