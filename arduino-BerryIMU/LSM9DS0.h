@@ -2,6 +2,7 @@
 #define LSM9DS0_ACC_ADDRESS		0x1E
 #define LSM9DS0_GYR_ADDRESS     0x6A
 
+
 //LSM9DS0 Gyro Registers	
 #define LSM9DS0_WHO_AM_I_G	0x0F
 #define LSM9DS0_CTRL_REG1_G	0x20
