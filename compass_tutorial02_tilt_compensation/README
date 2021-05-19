@@ -17,5 +17,6 @@ Distributed as-is; no warranty is given.
 To compile;
 gcc -o compass_tutorial02 compass_tutorial02.c -lm
 
+
 To run;
 sudo ./compass_tutorial02
