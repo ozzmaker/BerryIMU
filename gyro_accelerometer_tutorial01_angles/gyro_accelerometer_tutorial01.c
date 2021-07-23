@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 		readGYR(gyrRaw);
 
 		//Convert Gyro raw to degrees per second
-		rate_gyr_x = (float) gyrRaw[0] * G_GAIN;
+		rate_gyr_x = (float) gyrRaw[0]  * G_GAIN;
 		rate_gyr_y = (float) gyrRaw[1]  * G_GAIN;
 		rate_gyr_z = (float) gyrRaw[2]  * G_GAIN;
 
