@@ -1,6 +1,6 @@
 #define LSM9DS0_MAG_ADDRESS		0x1E
 #define LSM9DS0_ACC_ADDRESS		0x1E
-#define LSM9DS0_GYR_ADDRESS		0x6A
+#define LSM9DS0_GYR_ADDRESS     0x6A
 
 //LSM9DS0 Gyro Registers	
 #define LSM9DS0_WHO_AM_I_G	0x0F

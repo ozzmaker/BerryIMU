@@ -3,16 +3,17 @@
 	This program is used to create an Inclinometer using a
 	Raspberry Pi and an IMU
 
-	http://ozzmaker.com/2014/12/12/inclinometer-using-raspberry-pi-imu/
+	The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported.
 
+	Feel free to do whatever you like with this code
+	Distributed as-is; no warranty is given.
 
-    Both the BerryIMUv1 and BerryIMUv2 are supported
+	http://ozzmaker.com/inclinometer-using-raspberry-pi-imu/
 
-    Feel free to do whatever you like with this code
-    Distributed as-is; no warranty is given.
-
-    http://ozzmaker.com/
+ 
 */
+
+
 
 #include <sys/time.h>
 #include "SDL.h"
@@ -29,7 +30,7 @@
 #include "IMU.c"
 
 
-#define DT 0.2         	// [s/loop] loop period.  0.2  = 200ms
+#define DT 0.02         // [s/loop] loop period.  0.02  = 20ms
 #define AA 0.97         // complementary filter constant
 
 #define A_GAIN 0.0573   // [deg/LSB]
@@ -37,9 +38,12 @@
 #define RAD_TO_DEG 57.29578
 #define M_PI 3.14159265358979323846
 
+#define SCREEN_WIDTH  480
+#define SCREEN_HEIGHT  320
 
 int graphics(float carRoll, float carPitch);
 int startSDL();
+
 SDL_Surface* screen = NULL;
 SDL_Surface* inclinometerJeepFront = NULL;
 SDL_Surface* inclinometerJeepSide = NULL;
@@ -54,6 +58,8 @@ SDL_Rect inclinometerJeepFrontPosition;
 SDL_Rect inclinometerJeepSidePosition;
 
 SDL_VideoInfo* videoInfo;
+
+
 
 void  INThandler(int sig)
 {
@@ -104,6 +110,8 @@ int main(int argc, char *argv[])
 
 
 	signal(SIGINT, INThandler);
+
+
 
 	detectIMU();
 	enableIMU();
@@ -191,8 +199,9 @@ int main(int argc, char *argv[])
 
 int startSDL()
 {
+
 	//fb1 = small TFT.   fb0 = HDMI/RCA output
-	putenv("SDL_FBDEV=/dev/fb0");
+	//putenv("SDL_FBDEV=/dev/fb0");
 
 
 	//Initialize  SDL and disable mouse
@@ -203,7 +212,9 @@ int startSDL()
 	const SDL_VideoInfo* videoInfo = SDL_GetVideoInfo();
 
 	//Setup a Video mode.
-	screen = SDL_SetVideoMode(videoInfo->current_w, videoInfo->current_h, videoInfo->vfmt->BitsPerPixel, SDL_SWSURFACE );
+	//screen = SDL_SetVideoMode(videoInfo->current_w, videoInfo->current_h, videoInfo->vfmt->BitsPerPixel, SDL_SWSURFACE );
+	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, videoInfo->vfmt->BitsPerPixel, SDL_SWSURFACE );
+
 	if ( screen == NULL ) {
 		fprintf(stderr, "Unable to setvideo: %s\n", SDL_GetError());
 		exit(1);
@@ -239,8 +250,8 @@ int startSDL()
 	//Convert the image to a format we can use.
 	compatibleInclinometerOverlay = SDL_DisplayFormatAlpha(inclinometerOverlay);
 
-	//Position the overlay in the middle of the screen.   screen heigth minus the height of the overlay image.
-	inclinometerJeepOverlayPosition.y = (videoInfo->current_h/2)-(compatibleInclinometerOverlay->h/2);
+	//Position the overlay in the middle of the screen.   screen height minus the height of the overlay image.
+	inclinometerJeepOverlayPosition.y = (SCREEN_HEIGHT/2)-(compatibleInclinometerOverlay->h/2);
 
 
 }
@@ -255,11 +266,13 @@ int graphics(float carRoll, float carPitch)
 	//Set all pixels to black to clear the last image.
 	SDL_FillRect(screen,NULL,0x000000);
 
-	//Position of both jeep images.
+	///Position of both jeep images.
 	inclinometerJeepFrontPosition.x = 30;
-	inclinometerJeepFrontPosition.y = (videoInfo->current_h/2)-(compatibleInclinometerJeepFront->h/2);
+	inclinometerJeepFrontPosition.y = (SCREEN_HEIGHT/2)-((compatibleInclinometerJeepFront->h)/2);
+
+
 	inclinometerJeepSidePosition.x = 262;
-	inclinometerJeepSidePosition.y = (videoInfo->current_h/2)-(compatibleInclinometerJeepFront->h/2);
+	inclinometerJeepSidePosition.y = (SCREEN_HEIGHT/2)-(compatibleInclinometerJeepFront->h/2);
 
 
 	//Rotate the images based on pitch and roll.
