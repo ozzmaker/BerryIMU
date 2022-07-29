@@ -1,7 +1,10 @@
 /*This file can be used to test the magnetometer LIS3MDL.  
   This chip is found on the BerryIMUv3 and BerryGPS-IMUv4.
   For accurate results, the LIS3MDL must be as far away as possible
-  from magnetic sources.*/
+  from magnetic sources.
+  
+  Feel free to do whatever you like with this code
+  Distributed as-is; no warranty is given.*/
 
 #include <stdint.h>
 #include "i2c-dev.h"
