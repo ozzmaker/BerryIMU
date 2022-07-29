@@ -1,0 +1,20 @@
+
+This program can be used to test the magnetometer LIS3MDL.  
+This chip is found on the BerryIMUv3 and BerryGPS-IMUv4.
+For accurate results, the LIS3MDL must be as far away as possible
+from magnetic sources.
+
+
+
+
+
+
+
+
+To compile;
+gcc -o selfTest-LIS3MDL selfTest-LIS3MDL.c
+
+
+
+More info here;
+http://ozzmaker.com/
