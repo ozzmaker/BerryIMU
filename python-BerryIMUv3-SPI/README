@@ -13,7 +13,7 @@ BerryIMUv3(LSM6DSL) is supported byt this code
 This script is python 2.7 and 3 compatible
 
 
-The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+
 
 Python2;
 Run using;
