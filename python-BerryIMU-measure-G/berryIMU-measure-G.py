@@ -36,7 +36,7 @@ while True:
     yG = (ACCx * 0.244)/1000
     xG = (ACCy * 0.244)/1000
     zG = (ACCz * 0.244)/1000
-    print("##### X = %fG  ##### Y =   %fG  ##### Z =  %fG  #####" % ( yG, xG, zG))
+    print("##### X = %fG  ##### Y =   %fG  ##### Z =  %fG  #####" % ( xG, yG, zG))
 
 
 
