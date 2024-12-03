@@ -145,9 +145,6 @@ else if(BerryIMUversion == 3){//For BerryIMUv3
         writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG1, 0b11011100);      // Temp sesnor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Selft test disabled.
         writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG2, 0b00100000);      // +/- 8 gauss
         writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG3, 0b00000000);      // Continuous-conversion mode
- byte temp = 11;
-    readFrom(LSM6DSL_ADDRESS,LIS3MDL_CTRL_REG3,1, temp);
-    Serial.print(temp);
   }
 }
 
