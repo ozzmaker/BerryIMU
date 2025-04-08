@@ -53,20 +53,20 @@ void loop() {
 
   //Read the measurements from  sensors
   readACC(buff);
-  accRaw[0] = (int)(buff[0] | (buff[1] << 8));   
-  accRaw[1] = (int)(buff[2] | (buff[3] << 8));
-  accRaw[2] = (int)(buff[4] | (buff[5] << 8));
+  accRaw[0] = (short)(buff[0] | (buff[1] << 8));   
+  accRaw[1] = (short)(buff[2] | (buff[3] << 8));
+  accRaw[2] = (short)(buff[4] | (buff[5] << 8));
 
   readMAG(buff);
-  magRaw[0] = (int)(buff[0] | (buff[1] << 8));   
-  magRaw[1] = (int)(buff[2] | (buff[3] << 8));
-  magRaw[2] = (int)(buff[4] | (buff[5] << 8));
+  magRaw[0] = (short)(buff[0] | (buff[1] << 8));   
+  magRaw[1] = (short)(buff[2] | (buff[3] << 8));
+  magRaw[2] = (short)(buff[4] | (buff[5] << 8));
 
 
   readGYR(buff);
-  gyrRaw[0] = (int)(buff[0] | (buff[1] << 8));   
-  gyrRaw[1] = (int)(buff[2] | (buff[3] << 8));
-  gyrRaw[2] = (int)(buff[4] | (buff[5] << 8));
+  gyrRaw[0] = (short)(buff[0] | (buff[1] << 8));   
+  gyrRaw[1] = (short)(buff[2] | (buff[3] << 8));
+  gyrRaw[2] = (short)(buff[4] | (buff[5] << 8));
 
   //Convert Gyro raw to degrees per second
   rate_gyr_x = (float) gyrRaw[0] * G_GAIN;
