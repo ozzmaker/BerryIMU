@@ -63,7 +63,7 @@ while True:
     b = datetime.datetime.now() - a
     a = datetime.datetime.now()
     LP = b.microseconds/(1000000*1.0)
-    outputString = "Loop Time %5.2f " % ( LP )
+    outputString = "Loop Time %5.4f " % ( LP )
 
 
     #Convert Gyro raw to degrees per second
@@ -112,4 +112,4 @@ while True:
 
 
     #slow program down a bit, makes the output more readable. Comment out the below line to go as fast as possible 
-    time.sleep(0.01)
+    time.sleep(0.00)

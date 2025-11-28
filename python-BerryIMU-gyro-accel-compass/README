@@ -7,12 +7,15 @@ http://ozzmaker.com/berryimu
 
 
 
+
+The BerryIMUv1, BerryIMUv2, BerryIMUv3 and BerryIMU320G are supported
+
 BerryIMUv1 uses LSM9DS0 IMU
 BerryIMUv2 uses LSM9DS1 IMU
-BerryIMUv3 uses LSM6DSL and LIS3MDL
+BerryIMUv3 uses LS6MDSL and LIS3MDL
+BerryIMU-320G uses, LSM6DSV320X and LIS3MDL
 
-
-The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+This script is python 2.7 and 3 compatible
 
 Python2;
 Run using;

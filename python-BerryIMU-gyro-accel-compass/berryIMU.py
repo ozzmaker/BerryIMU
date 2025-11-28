@@ -1,13 +1,11 @@
 #!/usr/bin/python
 #
-#       This program includes a number of calculations to improve the
-#       values returned from a BerryIMU. If this is new to you, it
-#       may be worthwhile first to look at berryIMU-simple.py, which
-#       has a much more simplified version of code which is easier
-#       to read.
+#       This is the base code needed to get usable angles from a BerryIMU
+#       using a Complementary filter. The readings can be improved by
+#       adding more filters, E.g Kalman, Low pass, median filter, etc..
+#       See berryIMU.py for more advanced code.
 #
-#
-#       The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+#       The BerryIMUv1, BerryIMUv2, BerryIMUv3 and BerryIMU320G are supported
 #
 #       This script is python 2.7 and 3 compatible
 #
@@ -30,18 +28,19 @@ M_PI = 3.14159265358979323846
 G_GAIN = 0.070  # [deg/s/LSB]  If you change the dps for gyro, you need to update this value accordingly
 AA =  0.40      # Complementary filter constant
 
-
 ################# Compass Calibration values ############
 # Use calibrateBerryIMU.py to get calibration values
 # Calibrating the compass isnt mandatory, however a calibrated
-# compass will result in a more accurate heading value.
+# compass will result in a more accurate heading values.
 
-magXmin =  0
-magYmin =  0
-magZmin =  0
-magXmax =  0
-magYmax =  0
-magZmax =  0
+magXmin = 0
+magYmin = 0
+magZmin = 0
+magXmax = 0
+magYmax = 0
+magZmax = 0
+
+
 
 
 '''
@@ -55,7 +54,6 @@ magZmax =  708
 Dont use the above values, these are just an example.
 '''
 ############### END Calibration offsets #################
-
 
 #Kalman filter variables
 Q_angle = 0.02
@@ -149,8 +147,9 @@ def kalmanFilterX ( accAngle, gyroRate, DT):
     return KFangleX
 
 
-IMU.detectIMU()     #Detect if BerryIMU is connected.
-if(IMU.BerryIMUversion == 99):
+
+IMU.detectIMU()                 #Detect if BerryIMU is connected.
+if IMU.BerryIMUversion == 99:   #Default value is 99, exit if it hasnt changed, which means we have detected a BerryIMU
     print(" No BerryIMU found... exiting ")
     sys.exit()
 IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
@@ -166,9 +165,8 @@ kalmanY = 0.0
 a = datetime.datetime.now()
 
 while True:
-
-
     #Read the accelerometer,gyroscope and magnetometer values
+ 
     ACCx = IMU.readACCx()
     ACCy = IMU.readACCy()
     ACCz = IMU.readACCz()
@@ -178,20 +176,17 @@ while True:
     MAGx = IMU.readMAGx()
     MAGy = IMU.readMAGy()
     MAGz = IMU.readMAGz()
-
-
+  
     #Apply compass calibration
     MAGx -= (magXmin + magXmax) /2
     MAGy -= (magYmin + magYmax) /2
     MAGz -= (magZmin + magZmax) /2
-
 
     ##Calculate loop Period(LP). How long between Gyro Reads
     b = datetime.datetime.now() - a
     a = datetime.datetime.now()
     LP = b.microseconds/(1000000*1.0)
     outputString = "Loop Time %5.2f " % ( LP )
-
 
 
     #Convert Gyro raw to degrees per second
@@ -206,17 +201,14 @@ while True:
     gyroZangle+=rate_gyr_z*LP
 
 
-
-   #Convert Accelerometer values to degrees
+    #Convert accelerometer values to degrees
     AccXangle =  (math.atan2(ACCy,ACCz)*RAD_TO_DEG)
     AccYangle =  (math.atan2(ACCz,ACCx)+M_PI)*RAD_TO_DEG
-
     #convert the values to -180 and +180
     if AccYangle > 90:
         AccYangle -= 270.0
     else:
         AccYangle += 90.0
-
 
     #Complementary filter used to combine the accelerometer and gyro values.
     CFangleX=AA*(CFangleX+rate_gyr_x*LP) +(1 - AA) * AccXangle
@@ -252,17 +244,17 @@ while True:
 
 
     #Calculate the new tilt compensated values
-    #The compass and accelerometer are orientated differently on the the BerryIMUv1, v2 and v3.
+    #The compass and accelerometer are orientated differently on the the BerryIMUv1, v2, v3 and 320G
     #This needs to be taken into consideration when performing the calculations
 
     #X compensation
-    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+    if IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3 or IMU.BerryIMUversion == 320:            #LSM9DS0, (LSM6DSL | LSM6DSV320X & LIS2MDL)
         magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
     else:                                                                #LSM9DS1
         magXcomp = MAGx*math.cos(pitch)-MAGz*math.sin(pitch)
 
     #Y compensation
-    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+    if IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3 or IMU.BerryIMUversion == 320:            #LSM9DS0, (LSM6DSL | LSM6DSV320X & LIS2MDL)
         magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)
     else:                                                                #LSM9DS1
         magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)

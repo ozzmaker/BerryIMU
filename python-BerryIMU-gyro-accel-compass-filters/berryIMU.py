@@ -6,14 +6,14 @@
 #    This program includes two filters (low pass and median) to improve the
 #    values returned from BerryIMU by reducing noise.
 #
-#    The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+#    The BerryIMUv1, BerryIMUv2, BerryIMUv3 and BerryIMU320G are supported
 #
 #    This script is python 2.7 and 3 compatible
 #
 #    Feel free to do whatever you like with this code.
 #    Distributed as-is; no warranty is given.
 #
-#    http://ozzmaker.com/
+#    https://ozzmaker.com/berryimu/
 
 
 
@@ -355,17 +355,17 @@ while True:
 
 
     #Calculate the new tilt compensated values
-    #The compass and accelerometer are orientated differently on the the BerryIMUv1, v2 and v3.
+    #The compass and accelerometer are orientated differently on the the BerryIMUv1, v2, v3 and 320G
     #This needs to be taken into consideration when performing the calculations
 
     #X compensation
-    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+    if IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3 or IMU.BerryIMUversion == 320:            #LSM9DS0, (LSM6DSL | LSM6DSV320X & LIS2MDL)
         magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
     else:                                                                #LSM9DS1
         magXcomp = MAGx*math.cos(pitch)-MAGz*math.sin(pitch)
 
     #Y compensation
-    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+    if IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3 or IMU.BerryIMUversion == 320:            #LSM9DS0, (LSM6DSL | LSM6DSV320X & LIS2MDL)
         magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)
     else:                                                                #LSM9DS1
         magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)

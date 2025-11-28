@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 #
 #       This is the base code needed to get usable angles from a BerryIMU
@@ -5,7 +6,7 @@
 #       adding more filters, E.g Kalman, Low pass, median filter, etc..
 #       See berryIMU.py for more advanced code.
 #
-#       The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+#       The BerryIMUv1, BerryIMUv2, BerryIMUv3 and BerryIMU320G are supported
 #
 #       This script is python 2.7 and 3 compatible
 #
@@ -33,12 +34,13 @@ AA =  0.40      # Complementary filter constant
 # Calibrating the compass isnt mandatory, however a calibrated
 # compass will result in a more accurate heading values.
 
-magXmin =  0
-magYmin =  0
-magZmin =  0
-magXmax =  0
-magYmax =  0
-magZmax =  0
+magXmin = 0
+magYmin = 0
+magZmin = 0
+magXmax = 0
+magYmax = 0
+magZmax = 0
+
 
 
 
@@ -63,8 +65,8 @@ CFangleX = 0.0
 CFangleY = 0.0
 
 
-IMU.detectIMU()     #Detect if BerryIMU is connected.
-if(IMU.BerryIMUversion == 99):
+IMU.detectIMU()                 #Detect if BerryIMU is connected.
+if IMU.BerryIMUversion == 99:   #Default value is 99, exit if it hasnt changed, which means we have detected a BerryIMU
     print(" No BerryIMU found... exiting ")
     sys.exit()
 IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
@@ -76,6 +78,7 @@ a = datetime.datetime.now()
 
 while True:
     #Read the accelerometer,gyroscope and magnetometer values
+ 
     ACCx = IMU.readACCx()
     ACCy = IMU.readACCy()
     ACCz = IMU.readACCz()
@@ -85,7 +88,7 @@ while True:
     MAGx = IMU.readMAGx()
     MAGy = IMU.readMAGy()
     MAGz = IMU.readMAGz()
-
+  
     #Apply compass calibration
     MAGx -= (magXmin + magXmax) /2
     MAGy -= (magYmin + magYmax) /2
@@ -110,17 +113,14 @@ while True:
     gyroZangle+=rate_gyr_z*LP
 
 
-    #Convert Accelerometer values to degrees
+    #Convert accelerometer values to degrees
     AccXangle =  (math.atan2(ACCy,ACCz)*RAD_TO_DEG)
     AccYangle =  (math.atan2(ACCz,ACCx)+M_PI)*RAD_TO_DEG
-
     #convert the values to -180 and +180
     if AccYangle > 90:
         AccYangle -= 270.0
     else:
         AccYangle += 90.0
-
-
 
     #Complementary filter used to combine the accelerometer and gyro values.
     CFangleX=AA*(CFangleX+rate_gyr_x*LP) +(1 - AA) * AccXangle
@@ -149,17 +149,17 @@ while True:
 
 
     #Calculate the new tilt compensated values
-    #The compass and accelerometer are orientated differently on the the BerryIMUv1, v2 and v3.
+    #The compass and accelerometer are orientated differently on the the BerryIMUv1, v2, v3 and 320G
     #This needs to be taken into consideration when performing the calculations
 
     #X compensation
-    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+    if IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3 or IMU.BerryIMUversion == 320:            #LSM9DS0, (LSM6DSL | LSM6DSV320X & LIS2MDL)
         magXcomp = MAGx*math.cos(pitch)+MAGz*math.sin(pitch)
     else:                                                                #LSM9DS1
         magXcomp = MAGx*math.cos(pitch)-MAGz*math.sin(pitch)
 
     #Y compensation
-    if(IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3):            #LSM9DS0 and (LSM6DSL & LIS2MDL)
+    if IMU.BerryIMUversion == 1 or IMU.BerryIMUversion == 3 or IMU.BerryIMUversion == 320:            #LSM9DS0, (LSM6DSL | LSM6DSV320X & LIS2MDL)
         magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)-MAGz*math.sin(roll)*math.cos(pitch)
     else:                                                                #LSM9DS1
         magYcomp = MAGx*math.sin(roll)*math.sin(pitch)+MAGy*math.cos(roll)+MAGz*math.sin(roll)*math.cos(pitch)
@@ -176,8 +176,8 @@ while True:
 
     ##################### END Tilt Compensation ########################
 
-
-    if 1:                       #Change to '0' to stop showing the angles from the accelerometer
+    #Change to '0' to stop showing the angles from the accelerometer
+    if 1:
         outputString += "#  ACCX Angle %5.2f ACCY Angle %5.2f  #  " % (AccXangle, AccYangle)
 
     if 1:                       #Change to '0' to stop  showing the angles from the gyro
@@ -188,7 +188,6 @@ while True:
 
     if 1:                       #Change to '0' to stop  showing the heading
         outputString +="\t# HEADING %5.2f  tiltCompensatedHeading %5.2f #" % (heading,tiltCompensatedHeading)
-
 
     print(outputString)
 

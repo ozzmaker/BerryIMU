@@ -4,6 +4,7 @@ from LSM9DS0 import *
 from LSM9DS1 import *
 from LSM6DSL import *
 from LIS3MDL import *
+from LSM6DSV320X import *
 import time
 
 
@@ -20,6 +21,7 @@ def detectIMU():
     #BerryIMUv1 uses the LSM9DS0
     #BerryIMUv2 uses the LSM9DS1
     #BerryIMUv3 uses the LSM6DSL and LIS3MDL
+    #BerryIMU320G uses the LSM6DSV320X and LIS3MDL
  
     global BerryIMUversion
 
@@ -36,7 +38,6 @@ def detectIMU():
         if (LSM9DS0_WHO_G_response == 0xd4) and (LSM9DS0_WHO_XM_response == 0x49):
             print("Found BerryIMUv1 (LSM9DS0)")
             BerryIMUversion = 1
-
 
     try:
         #Check for BerryIMUv2 (LSM9DS1)
@@ -65,18 +66,22 @@ def detectIMU():
         if (LSM6DSL_WHO_AM_I_response == 0x6A) and (LIS3MDL_WHO_AM_I_response == 0x3D):
             print("Found BerryIMUv3 (LSM6DSL and LIS3MDL)")
             BerryIMUversion = 3
+
     time.sleep(1)
+    try:
+        #Check for BerryIMU320G (LSM6DSV320X and LIS3MDL)
+        #If no LSM6DSV320X or LIS3MDL is connected, there will be an I2C bus error and the program will exit.
+        #This section of code stops this from happening.
+        LSM6DSV320X_WHO_AM_response = (bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_WHO_AM_I))
+        LIS3MDL_WHO_AM_I_response = (bus.read_byte_data(LIS3MDL_ADDRESS, LIS3MDL_WHO_AM_I))
 
-
-
-
-
-
-
-
-
-
-
+    except IOError as f:
+        print('')        #need to do something here, so we just print a space
+    else:
+        if (LSM6DSV320X_WHO_AM_response == 0x73) and (LIS3MDL_WHO_AM_I_response == 0x3D):
+            print("Found BerryIMU320G (LSM6DSV320X and LIS3MDL)")
+            BerryIMUversion = 320
+    time.sleep(1)
 
 
 
@@ -97,14 +102,40 @@ def readACCx():
     elif(BerryIMUversion == 3):
         acc_l = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTX_L_XL)
         acc_h = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTX_H_XL)
+    elif(BerryIMUversion == 320):
+        acc_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTX_L_A)
+        acc_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTX_H_A)
 
     acc_combined = (acc_l | acc_h <<8)
     return acc_combined  if acc_combined < 32768 else acc_combined - 65536
 
 
+def readACCx_HG():
+    acc_l = 0
+    acc_h = 0
+    acc_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_UI_OUTX_L_A_OIS_HG)
+    acc_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_UI_OUTX_H_A_OIS_HG)
 
- 
+    acc_combined = (acc_l | acc_h <<8)
+    return acc_combined  if acc_combined < 32768 else acc_combined - 65536
 
+def readACCy_HG():
+    acc_l = 0
+    acc_h = 0
+    acc_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_UI_OUTY_L_A_OIS_HG)
+    acc_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_UI_OUTY_H_A_OIS_HG)
+
+    acc_combined = (acc_l | acc_h <<8)
+    return acc_combined  if acc_combined < 32768 else acc_combined - 65536
+
+def readACCz_HG():
+    acc_l = 0
+    acc_h = 0
+    acc_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_UI_OUTZ_L_A_OIS_HG)
+    acc_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_UI_OUTZ_H_A_OIS_HG)
+
+    acc_combined = (acc_l | acc_h <<8)
+    return acc_combined  if acc_combined < 32768 else acc_combined - 65536
 
 def readACCy():
     acc_l = 0
@@ -118,6 +149,9 @@ def readACCy():
     elif(BerryIMUversion == 3):
         acc_l = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTY_L_XL)
         acc_h = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTY_H_XL)
+    elif(BerryIMUversion == 320):
+        acc_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTY_L_A)
+        acc_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTY_H_A)
 
     acc_combined = (acc_l | acc_h <<8)
     return acc_combined  if acc_combined < 32768 else acc_combined - 65536
@@ -136,6 +170,10 @@ def readACCz():
         acc_l = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTZ_L_XL)
         acc_h = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTZ_H_XL)
 
+    elif(BerryIMUversion == 320):
+        acc_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTZ_L_A)
+        acc_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTZ_H_A)
+
     acc_combined = (acc_l | acc_h <<8)
     return acc_combined  if acc_combined < 32768 else acc_combined - 65536
 
@@ -152,6 +190,11 @@ def readGYRx():
     elif(BerryIMUversion == 3):
         gyr_l = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTX_L_G)
         gyr_h = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTX_H_G)
+        print(LSM6DSL_ADDRESS)
+        print(LSM6DSL_OUTX_H_G)
+    elif(BerryIMUversion == 320):
+        gyr_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTX_L_G)
+        gyr_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTX_H_G)
 
     gyr_combined = (gyr_l | gyr_h <<8)
     return gyr_combined  if gyr_combined < 32768 else gyr_combined - 65536
@@ -169,6 +212,9 @@ def readGYRy():
     elif(BerryIMUversion == 3):
         gyr_l = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTY_L_G)
         gyr_h = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTY_H_G)
+    elif(BerryIMUversion == 320):
+        gyr_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTY_L_G)
+        gyr_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTY_H_G)
 
     gyr_combined = (gyr_l | gyr_h <<8)
     return gyr_combined  if gyr_combined < 32768 else gyr_combined - 65536
@@ -185,6 +231,9 @@ def readGYRz():
     elif(BerryIMUversion == 3):
         gyr_l = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTZ_L_G)
         gyr_h = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTZ_H_G)
+    elif(BerryIMUversion == 320):
+        gyr_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTZ_L_G)
+        gyr_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTZ_H_G)
 
     gyr_combined = (gyr_l | gyr_h <<8)
     return gyr_combined  if gyr_combined < 32768 else gyr_combined - 65536
@@ -199,7 +248,7 @@ def readMAGx():
     elif(BerryIMUversion == 2):
         mag_l = bus.read_byte_data(LSM9DS1_MAG_ADDRESS, LSM9DS1_OUT_X_L_M)
         mag_h = bus.read_byte_data(LSM9DS1_MAG_ADDRESS, LSM9DS1_OUT_X_H_M)
-    elif(BerryIMUversion == 3):
+    elif(BerryIMUversion == 3 or BerryIMUversion == 320):
         mag_l = bus.read_byte_data(LIS3MDL_ADDRESS, LIS3MDL_OUT_X_L)
         mag_h = bus.read_byte_data(LIS3MDL_ADDRESS, LIS3MDL_OUT_X_H)
 
@@ -216,7 +265,7 @@ def readMAGy():
     elif(BerryIMUversion == 2):
         mag_l = bus.read_byte_data(LSM9DS1_MAG_ADDRESS, LSM9DS1_OUT_Y_L_M)
         mag_h = bus.read_byte_data(LSM9DS1_MAG_ADDRESS, LSM9DS1_OUT_Y_H_M)
-    elif(BerryIMUversion == 3):
+    elif(BerryIMUversion == 3 or BerryIMUversion == 320):
         mag_l = bus.read_byte_data(LIS3MDL_ADDRESS, LIS3MDL_OUT_Y_L)
         mag_h = bus.read_byte_data(LIS3MDL_ADDRESS, LIS3MDL_OUT_Y_H)
 
@@ -233,7 +282,7 @@ def readMAGz():
     elif(BerryIMUversion == 2):
         mag_l = bus.read_byte_data(LSM9DS1_MAG_ADDRESS, LSM9DS1_OUT_Z_L_M)
         mag_h = bus.read_byte_data(LSM9DS1_MAG_ADDRESS, LSM9DS1_OUT_Z_H_M)
-    elif(BerryIMUversion == 3):
+    elif(BerryIMUversion == 3 or BerryIMUversion == 320):
         mag_l = bus.read_byte_data(LIS3MDL_ADDRESS, LIS3MDL_OUT_Z_L)
         mag_h = bus.read_byte_data(LIS3MDL_ADDRESS, LIS3MDL_OUT_Z_H)
 
@@ -246,7 +295,7 @@ def initIMU():
 
     if(BerryIMUversion == 1):   #For BerryIMUv1
         #initialise the accelerometer
-        writeByte(LSM9DS0_ACC_ADDRESS,LSM9DS0_CTRL_REG1_XM, 0b01100111)  #z,y,x axis enabled, continuos update,  100Hz data rate
+        writeByte(LSM9DS0_ACC_ADDRESS,LSM9DS0_CTRL_REG1_XM, 0b01100111)  #z,y,x axis enabled, continuous update,  100Hz data rate
         writeByte(LSM9DS0_ACC_ADDRESS,LSM9DS0_CTRL_REG2_XM, 0b00011000)  #+/- 8G full scale
 
         #initialise the magnetometer
@@ -256,7 +305,7 @@ def initIMU():
 
         #initialise the gyroscope
         writeByte(LSM9DS0_GYR_ADDRESS,LSM9DS0_CTRL_REG1_G, 0b00001111)   #Normal power mode, all axes enabled
-        writeByte(LSM9DS0_GYR_ADDRESS,LSM9DS0_CTRL_REG4_G, 0b00110000)   #Continuos update, 2000 dps full scale
+        writeByte(LSM9DS0_GYR_ADDRESS,LSM9DS0_CTRL_REG4_G, 0b00110000)   #Continuous update, 2000 dps full scale
 
     elif(BerryIMUversion == 2):       #For BerryIMUv2
         #initialise the accelerometer
@@ -271,20 +320,33 @@ def initIMU():
         #initialise the magnetometer
         writeByte(LSM9DS1_MAG_ADDRESS,LSM9DS1_CTRL_REG1_M, 0b10011100)    #Temp compensation enabled,Low power mode mode,80Hz ODR
         writeByte(LSM9DS1_MAG_ADDRESS,LSM9DS1_CTRL_REG2_M, 0b01000000)    #+/- 2gauss
-        writeByte(LSM9DS1_MAG_ADDRESS,LSM9DS1_CTRL_REG3_M, 0b00000000)    #continuos update
+        writeByte(LSM9DS1_MAG_ADDRESS,LSM9DS1_CTRL_REG3_M, 0b00000000)    #continuous update
         writeByte(LSM9DS1_MAG_ADDRESS,LSM9DS1_CTRL_REG4_M, 0b00000000)    #lower power mode for Z axis
 
     elif(BerryIMUversion == 3):       #For BerryIMUv3
         #initialise the accelerometer
         writeByte(LSM6DSL_ADDRESS,LSM6DSL_CTRL1_XL,0b10011111)           #ODR 3.33 kHz, +/- 8g , BW = 400hz
+        writeByte(LSM6DSL_ADDRESS,LSM6DSL_CTRL8_XL,0b11001000)           #Low pass filter enabled, BW9, composite filter
         writeByte(LSM6DSL_ADDRESS,LSM6DSL_CTRL3_C,0b01000100)            #Enable Block Data update, increment during multi byte read
 
         #initialise the gyroscope
         writeByte(LSM6DSL_ADDRESS,LSM6DSL_CTRL2_G,0b10011100)            #ODR 3.3 kHz, 2000 dps
 
         #initialise the magnetometer
-        writeByte(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG1, 0b11011100)         # Temp sesnor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Selft test disabled.
+        writeByte(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG1, 0b11011100)         # Temp sensor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Self test disabled.
         writeByte(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG2, 0b00100000)         # +/- 8 gauss
         writeByte(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG3, 0b00000000)         # Continuous-conversion mode
 
+    elif(BerryIMUversion == 320):     #For BerryIMU320G
+        writeByte(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL3, 0b01000000)    # Block data update
+        writeByte(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL1, 0b00000101)    # High performance mode, 60Hz
+        writeByte(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL1_XL_HG, 0b10011000)   #Enable high G.  480Hz ODR 32G
+        writeByte(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL8, 0b00000010)    # 8G
+        writeByte(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL2,0b00011010)     #1.92KHz, high-accuracy ODR mode
+        writeByte(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL6, 0b00000100)    # 2000dps
+
+        #initialise the magnetometer
+        writeByte(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG1, 0b11011100)         # Temp sensor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Self test disabled.
+        writeByte(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG2, 0b00100000)         # +/- 8 gauss
+        writeByte(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG3, 0b00000000)         # Continuous-conversion mode
 

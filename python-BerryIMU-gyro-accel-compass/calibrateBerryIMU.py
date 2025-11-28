@@ -7,7 +7,7 @@
 #   The script will printout some text which you then need to add to
 #   berryIMU.py or berryIMU-simple.py
 #
-#   The BerryIMUv1, BerryIMUv2 and BerryIMUv3 are supported
+#   The BerryIMUv1, BerryIMUv2, BerryIMUv3 and BerryIMU320G are supported
 #
 #   This script is python 2.7 and 3 compatible
 #
