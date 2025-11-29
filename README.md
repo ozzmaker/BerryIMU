@@ -19,6 +19,7 @@ Head on over to http://ozzmaker.com/berryimu-quick-start-guide/ for full details
 ![BerryIMU](https://ozzmaker.com/wp-content/uploads/2021/03/PicoI2C_SPI.png "BerryIMUv3")
 
 <h1>BerryIMU-320G</h1>
+
 ![BerryIMU](https://ozzmaker.com/wp-content/uploads/2025/11/RaspberryPiBerryIMU-320GWireI2C.png "BerryIMU-320G")
 
 ![BerryIMU](https://ozzmaker.com/wp-content/uploads/2025/11/RaspberryPiBerryIMU-320GWireSPI.png "BerryIMU-320G")
