@@ -4,8 +4,7 @@
 #include "LSM9DS1.h"
 #include "LSM6DSL.h"
 #include "LIS3MDL.h"
-
-
+#include "LSM6DSV320X.h"
 
 int BerryIMUversion = 99;
 
@@ -41,13 +40,16 @@ void detectIMU(){
   //BerryIMUv1 uses the LSM9DS0
   //BerryIMUv2 uses the LSM9DS1
   //BerryIMUv3 uses the LSM6DSL and LIS3MDL
+  //BerryIMU320G uses the LSM6DSV320X and LIS3MDL
   
   Wire.begin(); 
+  Wire.setClock( 400000UL);
   byte LSM9DS0_WHO_AM_I_G_response;
   byte LSM9DS0_WHO_AM_I_XM_response;
   byte LSM9DS1_WHO_M_response;
   byte LSM9DS1_WHO_XG_response;
   byte LSM6DSL_WHO_AM_I_response;
+  byte LSM6DSV320X_WHO_AM_I_response;
   byte LIS3MDL_WHO_AM_I_response;
 
   
@@ -76,9 +78,7 @@ void detectIMU(){
   if (LSM9DS1_WHO_XG_response == 0x68 && LSM9DS1_WHO_M_response == 0x3D){
     Serial.println("\n\n   BerryIMUv2(LSM9DS1) found \n\n");
     BerryIMUversion = 2;
- 
-    
-  }
+   }
   
   //Detect if BerryIMUv3 (Which uses the LSM6DSL and LIS3MDL) is connected
   readFrom(LSM6DSL_ADDRESS, LSM6DSL_WHO_AM_I,1,WHOresponse);
@@ -90,10 +90,27 @@ void detectIMU(){
   if (LSM6DSL_WHO_AM_I_response == 0x6A && LIS3MDL_WHO_AM_I_response == 0x3D){
     Serial.println("\n\n   BerryIMUv3(LSM6DSL & LIS3MLD) found \n\n");
     BerryIMUversion = 3;
-    
   }
   
-  delay(1000);
+
+  //Detect if BerryIMU320G (Which uses the LSM6DSV320X and LIS3MDL) is connected
+  readFrom(LSM6DSV320X_ADDRESS, LSM6DSV320X_WHO_AM_I,1,WHOresponse);
+  LSM6DSV320X_WHO_AM_I_response = WHOresponse[0];
+  
+  readFrom(LIS3MDL_ADDRESS, LIS3MDL_WHO_AM_I,1,WHOresponse);
+  LIS3MDL_WHO_AM_I_response = WHOresponse[0];
+
+  if (LSM6DSV320X_WHO_AM_I_response == 0x73 && LIS3MDL_WHO_AM_I_response == 0x3D){
+    Serial.println("\n\n   BerryIMU320G(LSM6DSV320X & LIS3MLD) found \n\n");
+    BerryIMUversion = 320;
+  }
+
+
+
+
+
+
+  delay(2000);
   
 }
 
@@ -145,36 +162,171 @@ else if(BerryIMUversion == 3){//For BerryIMUv3
         writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG1, 0b11011100);      // Temp sesnor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Selft test disabled.
         writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG2, 0b00100000);      // +/- 8 gauss
         writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG3, 0b00000000);      // Continuous-conversion mode
+
+
+  /*Wire.beginTransmission(LSM6DSL_ADDRESS);
+  Wire.write(0x10); // CTRL1_XL register
+  Wire.write(0x50); // 208 Hz, +/-2g, BW =100Hz
+  Wire.endTransmission();
+  
+  Wire.beginTransmission(LSM6DSL_ADDRESS);
+  Wire.write(0x11); // CTRL2_G regi = 0.96;
+  Wire.write(0x50); //   208 Hz, 250dps
+  Wire.endTransmission();*/
+
+  }
+else if(BerryIMUversion == 320){//For BerryIMU320G  
+
+
+
+const int LSM6DSL_ADDR = 0x6A;
+
+/*
+ Wire.beginTransmission(LSM6DSV320X_ADDRESS);
+  Wire.write(0x10); // CTRL1_XL register
+  Wire.write(0x50); // 208 Hz, +/-2g, BW =100Hz
+  Wire.endTransmission();
+  
+
+
+  Wire.beginTransmission(LSM6DSV320X_ADDRESS);
+  Wire.write(0x10); // CTRL1_XL register
+  Wire.write(0b00010101); // 208 Hz, +/-2g, BW =100Hz
+  Wire.endTransmission();
+  
+
+
+
+    Wire.beginTransmission(LSM6DSV320X_ADDRESS);
+  Wire.write(0x17); // CTRL8_XL register
+  Wire.write(0b00000011); // 208 Hz, +/-2g, BW =100Hz
+  Wire.endTransmission();
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Wire.beginTransmission(LSM6DSV320X_ADDRESS);
+  Wire.write(0x11); // CTRL2_G regi = 0.96;
+  Wire.write(0x50); //   208 Hz, 250dps
+  Wire.endTransmission();*/
+
+
+/*
+writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL1,0b00010101);
+writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL8,0b00000011);
+writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL2,0b00011010);
+writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL1_XL_HG, 0b10111100);*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL3, 0b00000000);    // Continuous
+        writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL1, 0b00010101) ;  // High performance mode, 60Hz
+        writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL1_XL_HG, 0b10111100);   //Enable high G.  480Hz ODR 320G
+        writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL8, 0b00000011);    // 2G
+        writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL2,0b00011010);   //1.92KHz, high-accuracy ODR mode
+        writeTo(LSM6DSV320X_ADDRESS,LSM6DSV320X_CTRL6, 0b00000100);    // 2000dps
+
+        //initialise the magnetometer
+        writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG1, 0b11011100);        // Temp sensor enabled, High performance, ODR 80 Hz, FAST ODR disabled and Selft test disabled.
+        writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG2, 0b00100000);         // +/- 8 gauss
+        writeTo(LIS3MDL_ADDRESS,LIS3MDL_CTRL_REG3, 0b00000000);         // Continuous-conversion mode
   }
 }
-
 void readACC(byte buff[]){
   if (BerryIMUversion == 1)
     readFrom(LSM9DS0_ACC_ADDRESS, 0x80 | LSM9DS0_OUT_X_L_A, 6, buff);
-   else if(BerryIMUversion == 2 )//For BerryIMUv2  
+  else if(BerryIMUversion == 2 )//For BerryIMUv2  
     readFrom(LSM9DS1_ACC_ADDRESS, 0x80 | LSM9DS1_OUT_X_L_XL, 6, buff);
-  else if(BerryIMUversion == 3 )//For BerryIMUv3  
-    readFrom(LSM6DSL_ADDRESS, LSM6DSL_OUT_X_L_XL, 6, buff);
-    
+  else if(BerryIMUversion == 3 ){//For BerryIMUv3  
+    readFrom(LSM6DSL_ADDRESS,  LSM6DSL_OUT_X_L_XL, 6, buff);
 
+
+ /*Wire.beginTransmission(LSM6DSL_ADDRESS); // Read accelerometer and gyroscope values from LSM6DSL
+  Wire.write(0x22); // Read from OUTX_L_G (gyro) register
+  Wire.endTransmission();
+  Wire.requestFrom(LSM6DSL_ADDRESS, 6, true); //One master > "True" auto
+  int16_t gyro_x = Wire.read() | (Wire.read() << 8); //0x29 HIGH bit & 0x28 LOW bit
+  int16_t gyro_y = Wire.read() | (Wire.read() << 8); //0x2B HIGH bit & 0x2A LOW bit
+  int16_t gyro_z = Wire.read() | (Wire.read() << 8); //0x2D HIGH bit & 0x2C LOW bit
   
-} 
+  Wire.beginTransmission(LSM6DSL_ADDRESS);
+  Wire.write(0x28); // Read from OUTX_L_XL (accel) register
+  Wire.endTransmission();
+  Wire.requestFrom(LSM6DSL_ADDRESS, 6, true);
+  int16_t acc_x = Wire.read() | (Wire.read() << 8);
+  int16_t acc_y = Wire.read() | (Wire.read() << 8);
+  int16_t acc_z = Wire.read() | (Wire.read() << 8);
+
+  Serial.print(gyro_x);
+  Serial.print("  ");
+  Serial.print(gyro_y);
+  Serial.print("  ");
+  Serial.print(gyro_z);
+  Serial.print("  ");
+  Serial.print(acc_x);
+  Serial.print("  ");
+  Serial.print(acc_y);
+  Serial.print("  ");
+  Serial.println(acc_z);*/
+
+
+
+
+  }
+
+  else if(BerryIMUversion == 320 ){//For BerryIMU320  
+    readFrom(LSM6DSV320X_ADDRESS,  LSM6DSV320X_OUTX_L_A, 6, buff);   
+    /*for(int i = 0; i < 6; i++)
+{
+  Serial.print(buff[i]);
+  Serial.print(",");
+  
+}
+  Serial.println(",");*/
+} }
  
 void readMAG(byte buff[]){
   if (BerryIMUversion == 1)//For BerryIMUv1
     readFrom(LSM9DS0_MAG_ADDRESS, 0x80 | LSM9DS0_OUT_X_L_M, 6, buff);
   else if(BerryIMUversion == 2 )//For BerryIMUv2  
     readFrom(LSM9DS1_MAG_ADDRESS, 0x80 | LSM9DS1_OUT_X_L_M, 6, buff);
-  else if(BerryIMUversion == 3 )//For BerryIMUv3  
+  else if(BerryIMUversion == 3 or BerryIMUversion == 320 )//For BerryIMUv3  
     readFrom(LIS3MDL_ADDRESS, 0x80 | LIS3MDL_OUT_X_L, 6, buff);  
+  
 }
 
 void readGYR(byte buff[]){
   if (BerryIMUversion == 1)//For BerryIMUv1
-  readFrom(LSM9DS0_GYR_ADDRESS, 0x80 | LSM9DS0_OUT_X_L_G, 6, buff);
+   readFrom(LSM9DS0_GYR_ADDRESS, 0x80 | LSM9DS0_OUT_X_L_G, 6, buff);
   else if(BerryIMUversion == 2 )//For BerryIMUv2  
-  readFrom(LSM9DS1_GYR_ADDRESS, 0x80 | LSM9DS1_OUT_X_L_G, 6, buff);
+   readFrom(LSM9DS1_GYR_ADDRESS, 0x80 | LSM9DS1_OUT_X_L_G, 6, buff);
   else if(BerryIMUversion == 3 )//For BerryIMUv3  
-  readFrom(LSM6DSL_ADDRESS, LSM6DSL_OUT_X_L_G, 6, buff);
-  
+   readFrom(LSM6DSL_ADDRESS, LSM6DSL_OUT_X_L_G, 6, buff);
+  else if(BerryIMUversion == 320 )//For BerryIMU320  
+    readFrom(LSM6DSV320X_ADDRESS, 0x80 |LSM6DSV320X_OUTX_L_G, 6, buff);
+   
 }
