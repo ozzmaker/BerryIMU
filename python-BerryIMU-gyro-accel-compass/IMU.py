@@ -190,8 +190,6 @@ def readGYRx():
     elif(BerryIMUversion == 3):
         gyr_l = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTX_L_G)
         gyr_h = bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTX_H_G)
-        print(LSM6DSL_ADDRESS)
-        print(LSM6DSL_OUTX_H_G)
     elif(BerryIMUversion == 320):
         gyr_l = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTX_L_G)
         gyr_h = bus.read_byte_data(LSM6DSV320X_ADDRESS, LSM6DSV320X_OUTX_H_G)
